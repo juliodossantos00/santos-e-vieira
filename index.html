@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA SANTOS & VIEIRA - CRF v4.0</title>
+    <title>SANTOS & VIEIRA - PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -14,50 +14,50 @@
             display: flex; justify-content: center; align-items: center; background-color: #000;
         }
 
-        /* Efeito de TV Antiga */
-        body::after {
-            content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            z-index: 100; background-size: 100% 3px; pointer-events: none;
-        }
-
         .cyber-panel {
             width: 98%; height: 96%; background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px); border: 2px solid #ff0000;
             border-radius: 15px; display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4); z-index: 10;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
         }
 
         .header { 
-            padding: 10px 20px; border-bottom: 2px solid #ff0000; 
+            padding: 15px 20px; border-bottom: 2px solid #ff0000; 
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(255, 0, 0, 0.1);
         }
 
-        .crf-title { font-size: 25px; color: #ff0000; text-shadow: 0 0 10px #ff0000; margin: 0; }
-        #relogio { color: #fff; font-size: 18px; }
+        /* Moldura no Nome (A caixa que você comentou) */
+        .logo-box {
+            border: 1px solid #ff0000;
+            padding: 5px 15px;
+            background: rgba(255, 0, 0, 0.05);
+            box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+
+        .crf-title { font-size: 30px; color: #ff0000; text-shadow: 0 0 15px #ff0000; margin: 0; font-weight: bold; }
+        .system-name { color: #fff; letter-spacing: 3px; font-size: 11px; font-weight: bold; }
+
+        #relogio { color: #fff; font-size: 20px; text-shadow: 0 0 5px #fff; }
 
         .main-content { display: flex; flex: 1; padding: 10px; gap: 10px; overflow: hidden; }
 
-        /* Ajuste para Celular */
         @media (max-width: 768px) {
             .main-content { flex-direction: column; overflow-y: auto; }
             .sidebar { width: 100% !important; }
-            .chat-container { height: 300px !important; width: 100% !important; }
+            .chat-container { height: 350px !important; width: 100% !important; }
         }
 
         .sidebar { width: 220px; display: flex; flex-direction: column; gap: 10px; }
-        input { background: #000; border: 1px solid #ff0000; color: #fff; padding: 12px; border-radius: 5px; font-family: 'Orbitron'; width: 100%; }
+        input { background: #000; border: 1px solid #ff0000; color: #fff; padding: 12px; border-radius: 5px; font-family: 'Orbitron'; width: 100%; outline: none; }
         
         .btn { padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Orbitron'; color: white; transition: 0.3s; }
-        .btn-twitch { background: #9146ff; box-shadow: 0 0 10px #9146ff; }
-        .btn-yt { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
-        .btn:hover { transform: scale(1.02); filter: brightness(1.2); }
+        .btn-twitch { background: #9146ff; }
+        .btn-yt { background: #ff0000; }
+        .btn:hover { filter: brightness(1.2); }
 
         .video-container { flex: 2; background: #000; border: 1px solid #333; border-radius: 5px; overflow: hidden; }
-        
-        /* Container do Chat */
-        .chat-container { flex: 1; background: #000; border: 1px solid #ff0000; border-radius: 5px; overflow: hidden; display: none; }
+        .chat-container { flex: 1; background: #000; border: 1px solid #ff0000; border-radius: 5px; overflow: hidden; }
         
         iframe { width: 100%; height: 100%; border: none; }
     </style>
@@ -66,19 +66,18 @@
 
     <div class="cyber-panel">
         <div class="header">
-            <div>
+            <div class="logo-box">
                 <h1 class="crf-title">CRF</h1>
-                <small style="color: #fff; font-size: 9px;">SANTOS & VIEIRA - PRO</small>
+                <div class="system-name">SANTOS & VIEIRA - PRO</div>
             </div>
             <div id="relogio">00:00:00</div>
         </div>
 
         <div class="main-content">
             <div class="sidebar">
-                <input type="text" id="linkInput" placeholder="LINK OU NOME">
-                <button class="btn btn-twitch" onclick="smartLoad('twitch')">LIVE TWITCH</button>
-                <button class="btn btn-yt" onclick="smartLoad('yt')">VÍDEO YOUTUBE</button>
-                <div style="margin-top: auto; color: #ff0000; font-size: 9px; text-align: center;">SISTEMA OPERACIONAL</div>
+                <input type="text" id="linkInput" placeholder="NOME OU LINK">
+                <button class="btn btn-twitch" onclick="smartLoad('twitch')">ATIVAR TWITCH</button>
+                <button class="btn btn-yt" onclick="smartLoad('yt')">ATIVAR YOUTUBE</button>
             </div>
 
             <div class="video-container">
@@ -93,15 +92,13 @@
 
     <script>
         function clock() {
-            const now = new Date();
-            document.getElementById('relogio').innerText = now.toLocaleTimeString();
+            document.getElementById('relogio').innerText = new Date().toLocaleTimeString();
         }
         setInterval(clock, 1000); clock();
 
         function smartLoad(type) {
             const player = document.getElementById('mainPlayer');
             const chat = document.getElementById('twitchChat');
-            const chatBox = document.getElementById('chatBox');
             const input = document.getElementById('linkInput');
             let val = input.value.trim();
             if (!val) return;
@@ -110,19 +107,13 @@
 
             if (type === 'twitch') {
                 if (val.includes("twitch.tv/")) val = val.split("twitch.tv/")[1].split("?")[0];
-                
-                // Carrega o Vídeo
                 player.src = `https://player.twitch.tv/?channel=${val}&parent=${host || 'localhost'}`;
-                
-                // Carrega o Chat e mostra a caixa
                 chat.src = `https://www.twitch.tv/embed/${val}/chat?parent=${host || 'localhost'}&darkpopout`;
-                chatBox.style.display = "block";
             } else {
                 if (val.includes("v=")) val = val.split("v=")[1].split("&")[0];
                 else if (val.includes("youtu.be/")) val = val.split("youtu.be/")[1].split("?")[0];
-                
                 player.src = `https://www.youtube.com/embed/${val}?autoplay=1`;
-                chatBox.style.display = "none"; // Esconde o chat no YouTube para não pesar
+                chat.src = "";
             }
         }
     </script>
