@@ -6,65 +6,66 @@
     <title>SANTOS & VIEIRA - PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* RESET TOTAL - TIRANDO QUALQUER RISCO */
         * { box-sizing: border-box; }
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
             background: url('https://e0.pxfuel.com/wallpapers/319/536/desktop-wallpaper-maracana-stadium-stadiums-football-stadium-soccer-stadium.jpg') no-repeat center center fixed;
             background-size: cover; font-family: 'Orbitron', sans-serif;
             display: flex; justify-content: center; align-items: center; 
-            background-color: #000;
-            overflow: hidden;
+            background-color: #000; overflow: hidden;
         }
 
-        /* PAINEL PRINCIPAL */
         .cyber-panel {
             width: 98%; height: 96%; background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px); 
-            border: 2px solid #ff0000; /* Borda vermelha em volta de tudo */
-            border-radius: 15px; display: flex; flex-direction: column; 
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-            position: relative;
+            border: 2px solid #ff0000; border-radius: 12px;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
 
         .header { 
-            padding: 15px 20px; border-bottom: 2px solid #ff0000; 
+            padding: 10px 20px; border-bottom: 2px solid #ff0000; 
             display: flex; justify-content: space-between; align-items: center;
             background: rgba(255, 0, 0, 0.1);
         }
 
-        /* A CAIXA NO NOME QUE VOCÊ PEDIU */
         .caixa-logo {
-            border: 2px solid #ff0000; /* Borda da caixa */
-            padding: 10px 20px;
-            background: rgba(255, 0, 0, 0.1);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); /* Brilho da caixa */
-            text-align: center;
+            border: 1px solid #ff0000; padding: 8px 15px;
+            background: rgba(255, 0, 0, 0.05); text-align: center;
         }
 
-        .crf-title { font-size: 32px; color: #ff0000; text-shadow: 0 0 10px #ff0000; margin: 0; font-weight: bold; }
-        .system-name { color: #fff; letter-spacing: 2px; font-size: 12px; margin-top: 5px; font-weight: bold; }
+        .crf-title { font-size: 28px; color: #ff0000; margin: 0; font-weight: bold; }
+        .system-name { color: #fff; font-size: 10px; font-weight: bold; letter-spacing: 2px; }
 
-        #relogio { color: #fff; font-size: 22px; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .datetime-box { text-align: right; color: #fff; }
+        #relogio { font-size: 20px; font-weight: bold; display: block; }
+        #data { font-size: 12px; color: #ff0000; }
 
-        .main-content { display: flex; flex: 1; padding: 15px; gap: 15px; overflow: hidden; }
+        .main-content { display: flex; flex: 1; padding: 10px; gap: 10px; overflow: hidden; }
 
         @media (max-width: 768px) {
             .main-content { flex-direction: column; overflow-y: auto; }
             .sidebar { width: 100% !important; }
-            .chat-container { height: 350px !important; }
+            .chat-container { height: 300px !important; }
         }
 
-        .sidebar { width: 230px; display: flex; flex-direction: column; gap: 12px; }
-        input { background: #000; border: 1px solid #ff0000; color: #fff; padding: 12px; border-radius: 5px; font-family: 'Orbitron'; width: 100%; outline: none; }
+        .sidebar { width: 220px; display: flex; flex-direction: column; gap: 8px; }
+        input { background: #000; border: 1px solid #ff0000; color: #fff; padding: 10px; border-radius: 4px; font-family: 'Orbitron'; width: 100%; outline: none; font-size: 12px; }
         
-        .btn { padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Orbitron'; color: white; transition: 0.3s; text-transform: uppercase; }
-        .btn-twitch { background: #9146ff; box-shadow: 0 0 10px rgba(145, 70, 255, 0.4); }
-        .btn-yt { background: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); }
-        .btn:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .btn { padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: 'Orbitron'; color: white; text-transform: uppercase; font-size: 11px; transition: 0.3s; }
+        .btn-twitch { background: #9146ff; }
+        .btn-yt { background: #ff0000; }
+        
+        /* Botão de Reiniciar Estilo Antigo */
+        .btn-reboot { 
+            background: none; border: 1px solid #555; color: #555; 
+            margin-top: 5px; font-size: 9px;
+        }
+        .btn-reboot:hover { border-color: #ff0000; color: #ff0000; background: rgba(255,0,0,0.1); }
 
-        .video-container { flex: 2; background: #000; border: 1px solid #ff0000; border-radius: 8px; overflow: hidden; }
-        .chat-container { flex: 1; background: #000; border: 1px solid #ff0000; border-radius: 8px; overflow: hidden; }
+        .status-dot { width: 8px; height: 8px; background: #0f0; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 5px #0f0; }
+
+        .video-container { flex: 2; background: #000; border: 1px solid #ff0000; border-radius: 5px; overflow: hidden; }
+        .chat-container { flex: 1; background: #000; border: 1px solid #ff0000; border-radius: 5px; overflow: hidden; }
         
         iframe { width: 100%; height: 100%; border: none; }
     </style>
@@ -77,14 +78,22 @@
                 <h1 class="crf-title">CRF</h1>
                 <div class="system-name">SANTOS & VIEIRA - PRO</div>
             </div>
-            <div id="relogio">00:00:00</div>
+            <div class="datetime-box">
+                <span id="relogio">00:00:00</span>
+                <span id="data">00/00/0000</span>
+            </div>
         </div>
 
         <div class="main-content">
             <div class="sidebar">
-                <input type="text" id="linkInput" placeholder="LINK OU NOME">
-                <button class="btn btn-twitch" onclick="smartLoad('twitch')">ATIVAR TWITCH</button>
-                <button class="btn btn-yt" onclick="smartLoad('yt')">ATIVAR YOUTUBE</button>
+                <input type="text" id="linkInput" placeholder="LINK OU CANAL">
+                <button class="btn btn-twitch" onclick="smartLoad('twitch')">LIVE TWITCH</button>
+                <button class="btn btn-yt" onclick="smartLoad('yt')">VÍDEO YOUTUBE</button>
+                
+                <div style="margin-top: auto; padding: 10px; font-size: 9px; color: #fff;">
+                    <div><span class="status-dot"></span> SISTEMA ATIVO</div>
+                    <button class="btn btn-reboot" onclick="location.reload()">REBOOT SYSTEM</button>
+                </div>
             </div>
 
             <div class="video-container">
@@ -98,10 +107,13 @@
     </div>
 
     <script>
-        function clock() {
-            document.getElementById('relogio').innerText = new Date().toLocaleTimeString();
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('relogio').innerText = now.toLocaleTimeString('pt-BR');
+            document.getElementById('data').innerText = now.toLocaleDateString('pt-BR');
         }
-        setInterval(clock, 1000); clock();
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
 
         function smartLoad(type) {
             const player = document.getElementById('mainPlayer');
@@ -114,15 +126,4 @@
 
             if (type === 'twitch') {
                 if (val.includes("twitch.tv/")) val = val.split("twitch.tv/")[1].split("?")[0];
-                player.src = `https://player.twitch.tv/?channel=${val}&parent=${host || 'localhost'}`;
-                chat.src = `https://www.twitch.tv/embed/${val}/chat?parent=${host || 'localhost'}&darkpopout`;
-            } else {
-                if (val.includes("v=")) val = val.split("v=")[1].split("&")[0];
-                else if (val.includes("youtu.be/")) val = val.split("youtu.be/")[1].split("?")[0];
-                player.src = `https://www.youtube.com/embed/${val}?autoplay=1`;
-                chat.src = "";
-            }
-        }
-    </script>
-</body>
-</html>
+                player.src = `https://player.twitch.tv/?channel=${val}&
