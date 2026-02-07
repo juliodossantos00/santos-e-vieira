@@ -41,6 +41,8 @@ body::before{
     background:rgba(0,0,0,0.9);
     display:flex;
     flex-direction:column;
+    position: relative;
+    z-index: 1;
 }
 
 /* HEADER */
@@ -144,4 +146,94 @@ input{
 .player-box { flex: 2; }
 .chat-box { flex: 1; }
 
-/* AJUSTE DOS IFRAMES PARA OCUPAR T
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+@media(max-width:900px){
+    .core-body{flex-direction:column; overflow-y: auto;}
+    .sidebar{width:100%}
+    .player-box, .chat-box { min-height: 300px; }
+}
+</style>
+</head>
+
+<body onload="startSystem()">
+
+<div class="core-panel">
+    <div class="core-header">
+        <div>
+            <div class="core-title">SANTOS & VIEIRA</div>
+            <div class="core-sub">SYSTEM CORE INTERFACE</div>
+        </div>
+        <div class="datetime">
+            <div id="clock">--:--:--</div>
+            <div id="date">--/--/----</div>
+        </div>
+    </div>
+
+    <div class="core-body">
+        <div class="sidebar">
+            <input id="linkInput" placeholder="LINK / CANAL">
+            <button class="btn" onclick="loadStream('twitch')">TWITCH</button>
+            <button class="btn" onclick="loadStream('yt')">YOUTUBE</button>
+            <button class="btn btn-system" onclick="location.reload()">REBOOT SYSTEM</button>
+        </div>
+
+        <div class="player-box">
+            <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
+        </div>
+
+        <div class="chat-box">
+            <iframe id="chat" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+function startSystem(){
+    updateTime();
+    setInterval(updateTime,1000);
+}
+
+function updateTime(){
+    const clockEl = document.getElementById('clock');
+    const dateEl = document.getElementById('date');
+    const now = new Date();
+    if(clockEl) clockEl.innerText = now.toLocaleTimeString('pt-BR');
+    if(dateEl) dateEl.innerText = now.toLocaleDateString('pt-BR');
+}
+
+function loadStream(type){
+    const linkInput = document.getElementById('linkInput');
+    const player = document.getElementById('player');
+    const chat = document.getElementById('chat');
+    
+    let val = linkInput.value.trim();
+    if(!val) return;
+
+    const host = window.location.hostname || "localhost";
+
+    if(type === "twitch"){
+        if(val.includes("twitch.tv")) val = val.split("twitch.tv/")[1];
+        player.src = `https://player.twitch.tv/?channel=${val}&parent=${host}`;
+        chat.src = `https://www.twitch.tv/embed/${val}/chat?parent=${host}&darkpopout`;
+    } else {
+        let videoId = val;
+        // Pega o ID de qualquer formato de link do YouTube
+        if(val.includes("v=")) videoId = val.split("v=")[1].split("&")[0];
+        else if(val.includes("youtu.be/")) videoId = val.split("youtu.be/")[1].split("?")[0];
+        else if(val.includes("/live/")) videoId = val.split("/live/")[1].split("?")[0];
+        else if(val.includes("/embed/")) videoId = val.split("/embed/")[1].split("?")[0];
+
+        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        chat.src = `https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${host}`;
+    }
+}
+</script>
+
+</body>
+</html>
