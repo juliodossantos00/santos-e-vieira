@@ -31,7 +31,6 @@
         .category-label { font-size: 11px; color: var(--main-color); margin-top: 15px; border-bottom: 1px solid rgba(255,0,0,0.3); padding-bottom: 3px; font-weight: 700;}
         .fav-list{ display:flex; flex-direction:column; gap:6px; margin-top: 8px;}
         
-        /* ANIMAÇÃO DE ACENDER E CRESCER QUE VOCÊ PEDIU */
         .fav-item{
             display:flex; align-items:center; justify-content:space-between; background:rgba(255,0,0,0.05); 
             padding:10px; border: 1px solid rgba(255,0,0,0.2); border-left: 4px solid var(--main-color);
@@ -43,7 +42,6 @@
             box-shadow: 0 0 15px var(--glow-color);
             transform: scale(1.05) translateX(5px);
         }
-        .fav-item:hover .fav-info { color: #fff; text-shadow: 0 0 5px #fff; }
         .fav-info { flex: 1; font-size: 10px; font-weight: bold; }
 
         .btn-del { color: var(--main-color); background: none; border: none; cursor: pointer; font-weight: bold; padding: 0 5px;}
@@ -102,10 +100,8 @@
             
             <div class="category-label">SÓ NA CONVERSA</div>
             <div class="fav-list" id="cat-CONVERSA"></div>
-            
             <div class="category-label">GAMES</div>
             <div class="fav-list" id="cat-GAMES"></div>
-            
             <div class="category-label">ESPORTES</div>
             <div class="fav-list" id="cat-ESPORTES"></div>
             
@@ -118,14 +114,13 @@
 </div>
 
 <script>
-    // CANAIS ORIGINAIS PRESERVADOS
     let defaultFavs = [
-        { name: "CazéTV", id: "UCZiYbVptd3PVPf4f6eR6UaQ", type: "yt", cat: "ESPORTES" },
+        { name: "CazéTV", id: "CazeTV", type: "yt", cat: "ESPORTES" },
         { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
         { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" }
     ];
 
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v200')) || defaultFavs;
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v201')) || defaultFavs;
 
     function initSystem(){
         renderFavs();
@@ -142,60 +137,47 @@
     function cleanID(val) {
         if(!val) return "";
         let id = val.trim();
-        // Preserva a lógica de limpeza original do seu código
         if(id.includes("v=")) id = id.split("v=")[1].split("&")[0];
         else if(id.includes("/live/")) id = id.split("/live/")[1].split("?")[0];
         else if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
-        else if(id.includes("youtube.com/channel/")) id = id.split("channel/")[1].split("/")[0];
+        else if(id.includes("youtube.com/@")) id = id.split("@")[1];
         return id;
     }
 
     function processInput(mode, type) {
         const inputEl = mode === 'quick' ? document.getElementById('quickInput') : document.getElementById('saveInput');
-        const rawVal = inputEl.value;
-        if(!rawVal) return;
-        const id = cleanID(rawVal);
+        if(!inputEl.value) return;
+        const id = cleanID(inputEl.value);
         if(mode === 'quick') {
             loadStream(id, type);
         } else {
-            const cat = document.getElementById('favCat').value;
-            favorites.push({ name: id.toUpperCase(), id, type, cat });
-            localStorage.setItem('sv_favs_v200', JSON.stringify(favorites));
+            favorites.push({ name: id.toUpperCase(), id, type, cat: document.getElementById('favCat').value });
+            localStorage.setItem('sv_favs_v201', JSON.stringify(favorites));
             renderFavs();
             inputEl.value = "";
         }
     }
 
     function renderFavs(){
-        document.getElementById("cat-CONVERSA").innerHTML = "";
-        document.getElementById("cat-GAMES").innerHTML = "";
-        document.getElementById("cat-ESPORTES").innerHTML = "";
-        
+        ["CONVERSA", "GAMES", "ESPORTES"].forEach(c => document.getElementById(`cat-${c}`).innerHTML = "");
         favorites.forEach((fav, index) => {
-            let listId = "cat-CONVERSA";
-            if(fav.cat === "GAMES") listId = "cat-GAMES";
-            if(fav.cat === "ESPORTES") listId = "cat-ESPORTES";
-
-            const list = document.getElementById(listId);
-            if(list){
-                list.innerHTML += `
+            let listId = fav.cat === "SÓ NA CONVERSA" ? "cat-CONVERSA" : `cat-${fav.cat}`;
+            document.getElementById(listId).innerHTML += `
                 <div class="fav-item" onclick="loadStream('${fav.id}', '${fav.type}')">
                     <div class="fav-info">${fav.name.toUpperCase()}</div>
                     <button class="btn-del" onclick="event.stopPropagation(); deleteFav(${index})">X</button>
                 </div>`;
-            }
         });
     }
 
     function deleteFav(index){
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v200', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v201', JSON.stringify(favorites));
         renderFavs();
     }
 
     function loadStream(id, type){
         const player = document.getElementById('player');
-        const chat = document.getElementById('chat');
         const pCont = document.getElementById('pContainer');
         const cCont = document.getElementById('cContainer');
         const host = window.location.hostname || "localhost";
@@ -204,23 +186,20 @@
             pCont.classList.remove('full-width');
             cCont.classList.remove('hidden');
             player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
-            chat.src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
+            document.getElementById('chat').src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
         } else {
+            // SOLUÇÃO PARA YOUTUBE BLOQUEADO:
+            // Ele tenta carregar o embed, mas abre o link oficial em outra aba para garantir que você veja a live
             pCont.classList.add('full-width');
             cCont.classList.add('hidden');
             
-            // TRUQUE PARA ESCOLHER VÍDEO: Carrega a lista de uploads do canal
-            // Se o ID começar com UC (ID de canal), ele abre a lista de vídeos para você escolher
-            let embedUrl;
-            if(id.startsWith("UC")) {
-                // Esse link transforma o canal em uma playlist de vídeos recentes
-                let playlistId = "UU" + id.substring(2); 
-                embedUrl = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
-            } else {
-                embedUrl = `https://www.youtube.com/embed/${id}`;
-            }
-            player.src = embedUrl;
-            chat.src = "about:blank";
+            let ytLink = id.includes("UC") ? `https://www.youtube.com/channel/${id}/live` : `https://www.youtube.com/@${id}/live`;
+            
+            // Abre a live oficial na outra aba para burlar o bloqueio de direitos autorais
+            window.open(ytLink, '_blank');
+            
+            // No player do sistema, ele tenta carregar o modo seguro
+            player.src = `https://www.youtube.com/embed/live_stream?channel=${id}`;
         }
     }
 </script>
