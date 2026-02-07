@@ -13,42 +13,55 @@
         body::before{content:""; position:fixed; inset:0; background: linear-gradient(var(--glow-color) 1px, transparent 1px), linear-gradient(90deg, var(--glow-color) 1px, transparent 1px); background-size:50px 50px; z-index:-1; opacity: 0.05;}
 
         .core-panel{width:98%; height:96%; margin:1% auto; border:2px solid var(--main-color); border-radius:4px; box-shadow:0 0 20px var(--glow-color); background: var(--bg-panel); display:flex; flex-direction:column;}
-
         .core-header{display:flex; justify-content:space-between; align-items:center; padding:15px 25px; border-bottom:2px solid var(--main-color); background:rgba(255,0,0,0.05);}
         
         .core-body{flex:1; display:flex; gap:15px; padding:15px; overflow: hidden;}
         .sidebar{width:280px; display:flex; flex-direction:column; gap:12px; background: rgba(0,0,0,0.5); padding: 15px; border: 1px solid rgba(255,0,0,0.2); overflow-y: auto;}
         
-        input, select{background: #000; border: 1px solid var(--main-color); color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; outline: none; width: 100%; margin-bottom: 5px;}
-        input:focus{box-shadow: 0 0 10px var(--glow-color);}
+        input, select{background: #000; border: 1px solid var(--main-color); color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; outline: none; width: 100%; margin-bottom: 5px; transition: 0.3s;}
+        input:focus{box-shadow: 0 0 15px var(--main-color); background: rgba(255,0,0,0.1);}
 
         .btn{
             padding:10px; background: #000; color: var(--main-color); border: 1px solid var(--main-color); 
             cursor:pointer; text-transform:uppercase; font-size:10px; font-weight: bold; transition: 0.3s;
         }
-        .btn:hover{ background: var(--main-color); color: #000; box-shadow: 0 0 15px var(--main-color); }
+        .btn:hover{ background: var(--main-color); color: #000; box-shadow: 0 0 20px var(--main-color); transform: scale(1.02);}
 
-        .category-label { font-size: 11px; color: var(--main-color); margin-top: 15px; border-bottom: 1px solid rgba(255,0,0,0.3); padding-bottom: 3px; font-weight: 700;}
-        .fav-list{ display:flex; flex-direction:column; gap:6px; margin-top: 8px;}
+        .category-label { font-size: 11px; color: var(--main-color); margin-top: 15px; border-bottom: 1px solid rgba(255,0,0,0.3); padding-bottom: 3px; font-weight: 700; text-shadow: 0 0 5px var(--main-color);}
+        .fav-list{ display:flex; flex-direction:column; gap:8px; margin-top: 8px;}
         
+        /* ANIMAÇÃO DOS CANAIS SALVOS */
         .fav-item{
             display:flex; align-items:center; justify-content:space-between; background:rgba(255,0,0,0.05); 
-            padding:10px; border: 1px solid rgba(255,0,0,0.2); border-left: 4px solid var(--main-color);
+            padding:12px; border: 1px solid rgba(255,0,0,0.2); border-left: 4px solid var(--main-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efeito elástico */
+            cursor: pointer;
         }
-        .fav-info { cursor: pointer; flex: 1; font-size: 10px; }
-        .btn-del { color: var(--main-color); background: none; border: none; cursor: pointer; font-weight: bold; padding: 0 5px;}
+        
+        .fav-item:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: var(--main-color);
+            box-shadow: 0 0 15px var(--glow-color);
+            transform: scale(1.05) translateX(10px); /* Cresce e vai pro lado */
+        }
+
+        .fav-info { flex: 1; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        .fav-item:hover .fav-info { color: #fff; text-shadow: 0 0 8px #fff; }
+
+        .btn-del { color: var(--main-color); background: none; border: none; cursor: pointer; font-weight: bold; padding: 5px; transition: 0.3s;}
+        .btn-del:hover { color: #fff; transform: rotate(90deg); }
 
         .player-box, .chat-box {border:1px solid var(--main-color); background:#000;}
         .player-box { flex: 2; }
         .chat-box { flex: 1; }
-        .full-width { flex: 100% !important; }
-        .hidden { display: none !important; }
         iframe {width: 100%; height: 100%; border: none;}
 
-        .datetime { text-align: right; }
-        #clock { font-size: 20px; color: var(--main-color); text-shadow: 0 0 8px var(--main-color); }
-        #date { font-size: 11px; color: #fff; opacity: 0.8; }
+        .datetime { text-align: right; min-width: 160px; }
+        #clock { font-size: 20px; color: var(--main-color); text-shadow: 0 0 8px var(--main-color); display: block; font-weight: bold;}
+        #date { font-size: 11px; color: #fff; opacity: 0.8; display: block; }
 
+        .hidden { display: none !important; }
+        .full-width { flex: 100% !important; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--main-color); }
     </style>
@@ -62,15 +75,15 @@
             <div style="font-size:9px; opacity:0.6;">SISTEMA DE MONITORAMENTO</div>
         </div>
         <div class="datetime">
-            <div id="clock">00:00:00</div>
-            <div id="date">00/00/0000</div>
+            <span id="clock">00:00:00</span>
+            <span id="date">00/00/0000</span>
         </div>
     </div>
     
     <div class="core-body">
         <div class="sidebar">
             <div style="font-size: 10px; color: var(--main-color);">[ ENTRADA RÁPIDA ]</div>
-            <input id="quickInput" placeholder="NOME OU LINK DO CANAL">
+            <input id="quickInput" placeholder="NOME OU LINK">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                 <button class="btn" onclick="processInput('quick', 'twitch')">TWITCH</button>
                 <button class="btn" onclick="processInput('quick', 'yt')">YOUTUBE</button>
@@ -78,135 +91,6 @@
 
             <div style="border-top: 1px solid var(--main-color); padding-top: 15px; margin-top: 10px;">
                 <div style="color:var(--main-color); font-size:10px; font-weight:bold; margin-bottom:8px;">[ SALVAR FAVORITO ]</div>
-                <input id="saveInput" placeholder="NOME OU LINK DO CANAL">
+                <input id="saveInput" placeholder="NOME OU LINK">
                 <select id="favCat">
-                    <option value="SÓ NA CONVERSA">SÓ NA CONVERSA</option>
-                    <option value="GAMES">GAMES</option>
-                    <option value="ESPORTES">ESPORTES</option>
-                </select>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                    <button class="btn" onclick="processInput('save', 'twitch')">+ TWITCH</button>
-                    <button class="btn" onclick="processInput('save', 'yt')">+ YOUTUBE</button>
-                </div>
-            </div>
-            
-            <div class="category-label">SÓ NA CONVERSA</div>
-            <div class="fav-list" id="cat-CONVERSA"></div>
-            
-            <div class="category-label">GAMES</div>
-            <div class="fav-list" id="cat-GAMES"></div>
-            
-            <div class="category-label">ESPORTES</div>
-            <div class="fav-list" id="cat-ESPORTES"></div>
-            
-            <button class="btn" style="margin-top:auto; font-size:8px;" onclick="location.reload()">REINICIAR</button>
-        </div>
-
-        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen></iframe></div>
-        <div id="cContainer" class="chat-box"><iframe id="chat" allowfullscreen></iframe></div>
-    </div>
-</div>
-
-<script>
-    let defaultFavs = [
-        { name: "CazéTV", id: "UC_O_9O8G3uX_5p79_n9oA_A", type: "yt", cat: "ESPORTES" },
-        { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
-        { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" }
-    ];
-
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v5')) || defaultFavs;
-
-    function initSystem(){
-        renderFavs();
-        updateClock();
-        setInterval(updateClock, 1000);
-    }
-
-    function updateClock(){
-        const now = new Date();
-        document.getElementById('clock').innerText = now.toLocaleTimeString('pt-BR');
-        document.getElementById('date').innerText = now.toLocaleDateString('pt-BR');
-    }
-
-    function cleanID(val) {
-        if(!val) return "";
-        let id = val.trim();
-        if(id.includes("v=")) id = id.split("v=")[1].split("&")[0];
-        else if(id.includes("/live/")) id = id.split("/live/")[1].split("?")[0];
-        else if(id.includes("youtu.be/")) id = id.split("youtu.be/")[1].split("?")[0];
-        else if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
-        else if(id.includes("youtube.com/channel/")) id = id.split("channel/")[1].split("/")[0];
-        else if(id.includes("youtube.com/@")) id = id.split("@")[1].split("/")[0];
-        return id;
-    }
-
-    function processInput(mode, type) {
-        const inputEl = mode === 'quick' ? document.getElementById('quickInput') : document.getElementById('saveInput');
-        const rawVal = inputEl.value;
-        if(!rawVal) return;
-
-        const id = cleanID(rawVal);
-        const name = rawVal.split('/').pop().replace('@', '') || id;
-
-        if(mode === 'quick') {
-            loadStream(id, type, rawVal);
-        } else {
-            const cat = document.getElementById('favCat').value;
-            favorites.push({ name: name.toUpperCase(), id, type, cat });
-            localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
-            renderFavs();
-            inputEl.value = "";
-        }
-    }
-
-    function renderFavs(){
-        document.getElementById("cat-CONVERSA").innerHTML = "";
-        document.getElementById("cat-GAMES").innerHTML = "";
-        document.getElementById("cat-ESPORTES").innerHTML = "";
-        
-        favorites.forEach((fav, index) => {
-            let listId = fav.cat === "SÓ NA CONVERSA" ? "cat-CONVERSA" : `cat-${fav.cat}`;
-            const list = document.getElementById(listId);
-            if(list){
-                list.innerHTML += `
-                <div class="fav-item">
-                    <div class="fav-info" onclick="loadStream('${fav.id}', '${fav.type}', '${fav.id}')">
-                        ${fav.name.toUpperCase()} <span style="font-size:7px; color:red;">[${fav.type}]</span>
-                    </div>
-                    <button class="btn-del" onclick="deleteFav(${index})">X</button>
-                </div>`;
-            }
-        });
-    }
-
-    function deleteFav(index){
-        favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
-        renderFavs();
-    }
-
-    function loadStream(id, type, originalVal){
-        const player = document.getElementById('player');
-        const chat = document.getElementById('chat');
-        const pCont = document.getElementById('pContainer');
-        const cCont = document.getElementById('cContainer');
-        const host = window.location.hostname || "localhost";
-
-        if(type === 'twitch'){
-            pCont.classList.remove('full-width');
-            cCont.classList.remove('hidden');
-            player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
-            chat.src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
-        } else {
-            pCont.classList.add('full-width');
-            cCont.classList.add('hidden');
-            let embedUrl = (originalVal.includes("youtube.com") || originalVal.includes("youtu.be")) 
-                ? `https://www.youtube.com/embed/${id}?autoplay=1` 
-                : `https://www.youtube.com/embed/live_stream?channel=${id}`;
-            player.src = embedUrl;
-            chat.src = "about:blank";
-        }
-    }
-</script>
-</body>
-</html>
+                    <option value="CONVERSA">SÓ NA CONVERSA</option>
