@@ -34,7 +34,7 @@ body::before{
 .core-panel{
     width:98%;
     height:96%;
-    margin:auto;
+    margin:1% auto;
     border:2px solid #ff0000;
     border-radius:16px;
     box-shadow:0 0 30px #ff0000;
@@ -88,6 +88,7 @@ body::before{
     display:flex;
     gap:14px;
     padding:14px;
+    overflow: hidden;
 }
 
 /* SIDEBAR */
@@ -103,6 +104,7 @@ input{
     border:2px solid #ff0000;
     color:#fff;
     padding:12px;
+    font-family: 'Orbitron', sans-serif;
     outline:none;
     box-shadow:0 0 12px rgba(255,0,0,0.4);
 }
@@ -112,6 +114,7 @@ input{
     background:#111;
     color:#ff0000;
     border:2px solid #ff0000;
+    font-family: 'Orbitron', sans-serif;
     cursor:pointer;
     text-transform:uppercase;
     letter-spacing:1px;
@@ -129,32 +132,30 @@ input{
     font-size:11px;
 }
 
-/* PLAYER */
-.player-box{
-    flex:2;
+/* CONTAINERS DOS IFRAMES */
+.player-box, .chat-box {
     border:2px solid #ff0000;
     border-radius:12px;
     overflow:hidden;
     box-shadow:0 0 20px rgba(255,0,0,0.4);
+    background: #000;
 }
 
-.chat-box{
-    flex:1;
-    border:2px solid #ff0000;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 0 20px rgba(255,0,0,0.4);
-}
+.player-box { flex: 2; }
+.chat-box { flex: 1; }
 
-iframe{
-    width:100%;
-    height:100%;
-    border:none;
+/* AJUSTE DOS IFRAMES PARA OCUPAR TUDO E PERMITIR FULLSCREEN */
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
 }
 
 @media(max-width:900px){
-    .core-body{flex-direction:column}
+    .core-body{flex-direction:column; overflow-y: auto;}
     .sidebar{width:100%}
+    .player-box, .chat-box { min-height: 300px; }
 }
 </style>
 </head>
@@ -186,11 +187,11 @@ iframe{
         </div>
 
         <div class="player-box">
-            <iframe id="player"></iframe>
+            <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
         </div>
 
         <div class="chat-box">
-            <iframe id="chat"></iframe>
+            <iframe id="chat" allowfullscreen></iframe>
         </div>
 
     </div>
@@ -212,17 +213,20 @@ function loadStream(type){
     let val=linkInput.value.trim();
     if(!val) return;
 
-    const host=location.hostname || "localhost";
+    const host=window.location.hostname || "localhost";
 
     if(type==="twitch"){
         if(val.includes("twitch.tv")) val=val.split("twitch.tv/")[1];
         player.src=`https://player.twitch.tv/?channel=${val}&parent=${host}`;
         chat.src=`https://www.twitch.tv/embed/${val}/chat?parent=${host}&darkpopout`;
     }else{
-        if(val.includes("v=")) val=val.split("v=")[1];
-        if(val.includes("youtu.be")) val=val.split("youtu.be/")[1];
-        player.src=`https://www.youtube.com/embed/${val}?autoplay=1&vq=large`;
-        chat.src="";
+        // Tratamento para links de YouTube (normais, encurtados ou apenas o ID)
+        let videoId = val;
+        if(val.includes("v=")) videoId = val.split("v=")[1].split("&")[0];
+        else if(val.includes("youtu.be/")) videoId = val.split("youtu.be/")[1];
+
+        player.src=`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+        chat.src=""; // YouTube chat embed exige regras mais complexas, mantendo vazio ou você pode linkar o live_chat
     }
 }
 </script>
