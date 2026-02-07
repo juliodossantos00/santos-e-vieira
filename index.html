@@ -12,182 +12,111 @@
         
         body::before{content:""; position:fixed; inset:0; background: linear-gradient(var(--glow-color) 1px, transparent 1px), linear-gradient(90deg, var(--glow-color) 1px, transparent 1px); background-size:50px 50px; z-index:-1; opacity: 0.05;}
 
-        .core-panel{width:98%; height:96%; margin:1% auto; border:2px solid var(--main-color); border-radius:4px; box-shadow:0 0 20px var(--glow-color); background: var(--bg-panel); display:flex; flex-direction:column;}
-        .core-header{display:flex; justify-content:space-between; align-items:center; padding:15px 25px; border-bottom:2px solid var(--main-color); background:rgba(255,0,0,0.05);}
-        .core-title{color:var(--main-color); font-size:22px; letter-spacing:3px; text-shadow:0 0 10px var(--main-color);}
+        .core-panel{width:98%; height:96%; margin:1% auto; border:2px solid var(--main-color); border-radius:4px; box-shadow:0 0 20px var(--glow-color); background: var(--bg-panel); display:flex; flex-direction:column; position: relative;}
 
-        .core-body{flex:1; display:flex; gap:15px; padding:15px; overflow: hidden;}
-        .sidebar{width:280px; display:flex; flex-direction:column; gap:12px; background: rgba(0,0,0,0.5); padding: 15px; border: 1px solid rgba(255,0,0,0.2);}
+        .core-header{display:flex; justify-content:space-between; align-items:center; padding:10px 20px; border-bottom:2px solid var(--main-color); background:rgba(255,0,0,0.05);}
         
-        input{background: #000; border: 1px solid var(--main-color); color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; outline: none;}
-        input:focus{box-shadow: 0 0 10px var(--glow-color);}
+        .core-body{flex:1; display:flex; gap:15px; padding:15px; overflow: hidden;}
+        .sidebar{width:300px; display:flex; flex-direction:column; gap:10px; background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid rgba(255,0,0,0.2); overflow-y: auto;}
+        
+        /* MONITOR DE RAM */
+        .ram-monitor { font-size: 9px; color: var(--main-color); margin-bottom: 5px; border: 1px solid var(--main-color); padding: 5px; }
+        #ramBar { height: 4px; background: var(--main-color); width: 0%; margin-top: 4px; box-shadow: 0 0 10px var(--main-color); transition: 0.5s; }
 
+        input, select{background: #000; border: 1px solid var(--main-color); color: #fff; padding: 8px; font-family: 'Orbitron'; font-size: 10px; outline: none; width: 100%; margin-bottom: 5px;}
+        
         .btn{
             padding:10px; background: #000; color: var(--main-color); border: 1px solid var(--main-color); 
-            cursor:pointer; text-transform:uppercase; font-size:10px; font-weight: bold; transition: all 0.3s ease;
+            cursor:pointer; text-transform:uppercase; font-size:10px; font-weight: bold; transition: 0.3s; margin-bottom: 5px;
         }
-        .btn:hover{ background: var(--main-color); color: #000; box-shadow: 0 0 20px var(--main-color); }
+        .btn:hover{ background: var(--main-color); color: #000; box-shadow: 0 0 15px var(--main-color); }
 
-        .fav-manager { border-top: 2px solid var(--main-color); padding-top: 15px; display: flex; flex-direction: column; gap: 8px; }
-        .fav-list{flex: 1; display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding-top: 10px;}
+        .category-label { font-size: 10px; color: var(--main-color); margin-top: 15px; border-bottom: 1px solid rgba(255,0,0,0.3); padding-bottom: 2px; font-weight: bold;}
+        .fav-list{ display:flex; flex-direction:column; gap:5px; margin-bottom: 10px; min-height: 20px;}
         
         .fav-item{
-            display:flex; align-items:center; justify-content:space-between; background:rgba(255,0,0,0.02); 
-            padding:10px; border: 1px solid rgba(255,0,0,0.3); border-left: 5px solid var(--main-color); transition: 0.3s;
+            display:flex; align-items:center; justify-content:space-between; background:rgba(255,0,0,0.05); 
+            padding:8px; border: 1px solid rgba(255,0,0,0.2); border-left: 3px solid var(--main-color);
         }
-        .fav-item:hover { background: rgba(255,0,0,0.1); transform: translateX(5px); }
-        .fav-info { cursor: pointer; flex: 1; }
-        .fav-name{color:#fff; font-size:11px; display: block;}
-        .fav-type{color:var(--main-color); font-size:8px; font-weight: bold;}
-        
-        .btn-del { color: var(--main-color); background: none; border: 1px solid var(--main-color); cursor: pointer; padding: 2px 8px; font-size: 10px;}
-        .btn-del:hover { background: var(--main-color); color: #000; }
+        .fav-info { cursor: pointer; flex: 1; font-size: 10px; }
+        .btn-del { color: var(--main-color); background: none; border: none; cursor: pointer; padding: 0 5px; font-weight: bold;}
 
         .player-box, .chat-box {border:1px solid var(--main-color); background:#000;}
         .player-box { flex: 2; }
         .chat-box { flex: 1; }
         .full-width { flex: 100% !important; }
         .hidden { display: none !important; }
-        iframe {width: 100%; height: 100%; border: none; display: block;}
+        iframe {width: 100%; height: 100%; border: none;}
 
-        #clock { font-size: 20px; color: var(--main-color); text-shadow: 0 0 5px var(--main-color); }
-        ::-webkit-scrollbar { width: 4px; }
+        .datetime { text-align: right; }
+        #clock { font-size: 18px; color: var(--main-color); text-shadow: 0 0 5px var(--main-color); }
+        #date { font-size: 10px; color: #fff; }
+
+        /* MODO SILÊNCIO */
+        .silence-mode .sidebar, .silence-mode .core-header { display: none !important; }
+        .silence-mode .core-panel { width: 100%; height: 100%; margin: 0; border: none; }
+        
+        #exitSilence { position: fixed; top: 10px; right: 10px; z-index: 9999; display: none; }
+        .silence-mode #exitSilence { display: block; }
+
+        ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: var(--main-color); }
     </style>
 </head>
 <body onload="initSystem()">
 
-<div class="core-panel">
+<button id="exitSilence" class="btn" onclick="toggleSilence()">SAIR DO MODO SILÊNCIO</button>
+
+<div class="core-panel" id="mainPanel">
     <div class="core-header">
         <div>
-            <div class="core-title">SANTOS & VIEIRA</div>
-            <div style="font-size:9px; color: #aaa;">SISTEMA CORE OPERACIONAL</div>
+            <div style="color:var(--main-color); font-size:20px; font-weight:700;">SANTOS & VIEIRA</div>
+            <div style="font-size:9px;">SISTEMA CORE OPERACIONAL</div>
         </div>
-        <div id="clock">00:00:00</div>
+        <div class="datetime">
+            <div id="clock">00:00:00</div>
+            <div id="date">00/00/0000</div>
+        </div>
     </div>
     
     <div class="core-body">
         <div class="sidebar">
-            <div style="font-size: 10px; color: var(--main-color);">[ ENTRADA RÁPIDA ]</div>
-            <input id="linkInput" placeholder="LINK OU ID DO CANAL">
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div class="ram-monitor">
+                MEMÓRIA: <span id="ramText">--</span> MB
+                <div id="ramBar"></div>
+            </div>
+
+            <button class="btn" onclick="toggleSilence()">[ PROTOCOLO_SILÊNCIO ]</button>
+
+            <div style="font-size: 10px; color: var(--main-color); margin-top:5px;">[ ENTRADA RÁPIDA ]</div>
+            <input id="linkInput" placeholder="LINK OU ID">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
                 <button class="btn" onclick="loadStream('twitch')">TWITCH</button>
                 <button class="btn" onclick="loadStream('yt')">YOUTUBE</button>
             </div>
 
-            <div class="fav-manager">
-                <div style="color:var(--main-color); font-size:10px; font-weight:bold;">[ SALVAR CANAL ]</div>
+            <div style="border-top: 1px solid var(--main-color); padding-top: 10px; margin-top: 5px;">
+                <div style="color:var(--main-color); font-size:10px; font-weight:bold; margin-bottom:5px;">[ SALVAR NOVO ]</div>
                 <input id="favName" placeholder="NOME DO CANAL">
                 <input id="favId" placeholder="LINK OU ID">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                    <button class="btn" onclick="saveFav('twitch')">+ SALVAR TW</button>
-                    <button class="btn" onclick="saveFav('yt')">+ SALVAR YT</button>
+                <select id="favCat">
+                    <option value="ENTRETENIMENTO">ENTRETENIMENTO</option>
+                    <option value="RP">RP / GAMES</option>
+                    <option value="ESPORTES">ESPORTES</option>
+                </select>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                    <button class="btn" onclick="saveFav('twitch')">+ TWITCH</button>
+                    <button class="btn" onclick="saveFav('yt')">+ YOUTUBE</button>
                 </div>
             </div>
             
-            <div style="color:var(--main-color); font-size:10px; margin-top:10px;">[ CANAIS SALVOS ]</div>
-            <div class="fav-list" id="favoritesList"></div>
+            <div class="category-label">ENTRETENIMENTO</div>
+            <div class="fav-list" id="cat-ENTRETENIMENTO"></div>
             
-            <button class="btn" style="margin-top:auto; font-size:8px;" onclick="location.reload()">REINICIAR SISTEMA</button>
-        </div>
-
-        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen></iframe></div>
-        <div id="cContainer" class="chat-box"><iframe id="chat" allowfullscreen></iframe></div>
-    </div>
-</div>
-
-<script>
-    // Inicia com os seus canais favoritos já configurados
-    let defaultFavs = [
-        { name: "CazéTV", id: "UC_O_9O8G3uX_5p79_n9oA_A", type: "yt" },
-        { name: "Jon Vlogs", id: "jonvlogs", type: "twitch" },
-        { name: "LOUD Coringa", id: "loud_coringa", type: "twitch" }
-    ];
-
-    let favorites = JSON.parse(localStorage.getItem('sv_favs'));
-    if (!favorites) {
-        favorites = defaultFavs;
-        localStorage.setItem('sv_favs', JSON.stringify(favorites));
-    }
-
-    function initSystem(){
-        renderFavs();
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
-        }, 1000);
-    }
-
-    function cleanID(val) {
-        let id = val.trim();
-        if(id.includes("v=")) id = id.split("v=")[1].split("&")[0];
-        else if(id.includes("/live/")) id = id.split("/live/")[1].split("?")[0];
-        else if(id.includes("youtu.be/")) id = id.split("youtu.be/")[1].split("?")[0];
-        else if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
-        return id;
-    }
-
-    function saveFav(type){
-        const nameInput = document.getElementById('favName');
-        const idInput = document.getElementById('favId');
-        if(!nameInput.value || !idInput.value) return;
-        
-        favorites.push({ name: nameInput.value, id: cleanID(idInput.value), type: type });
-        localStorage.setItem('sv_favs', JSON.stringify(favorites));
-        renderFavs();
-        nameInput.value = ""; idInput.value = "";
-    }
-
-    function deleteFav(index){
-        favorites.splice(index, 1);
-        localStorage.setItem('sv_favs', JSON.stringify(favorites));
-        renderFavs();
-    }
-
-    function renderFavs(){
-        const list = document.getElementById('favoritesList');
-        list.innerHTML = "";
-        favorites.forEach((fav, index) => {
-            list.innerHTML += `
-                <div class="fav-item">
-                    <div class="fav-info" onclick="quickLoad('${fav.id}', '${fav.type}')">
-                        <span class="fav-name">${fav.name.toUpperCase()}</span>
-                        <span class="fav-type">${fav.type === 'yt' ? '[SINAL_YT]' : '[SINAL_TW]'}</span>
-                    </div>
-                    <button class="btn-del" onclick="deleteFav(${index})">X</button>
-                </div>`;
-        });
-    }
-
-    function quickLoad(id, type){
-        document.getElementById('linkInput').value = id;
-        loadStream(type);
-    }
-
-    function loadStream(type){
-        const val = document.getElementById('linkInput').value;
-        const player = document.getElementById('player');
-        const chat = document.getElementById('chat');
-        const pCont = document.getElementById('pContainer');
-        const cCont = document.getElementById('cContainer');
-        const host = window.location.hostname || "localhost";
-        let id = cleanID(val);
-
-        if(type === 'twitch'){
-            pCont.classList.remove('full-width');
-            cCont.classList.remove('hidden');
-            player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
-            chat.src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
-        } else {
-            pCont.classList.add('full-width');
-            cCont.classList.add('hidden');
-            let embedUrl = (val.includes("youtube.com") || val.includes("youtu.be")) 
-                ? `https://www.youtube.com/embed/${id}?autoplay=1` 
-                : `https://www.youtube.com/embed/live_stream?channel=${id}`;
-            player.src = embedUrl;
-            chat.src = "about:blank";
-        }
-    }
-</script>
-</body>
-</html>
+            <div class="category-label">RP / GAMES</div>
+            <div class="fav-list" id="cat-RP"></div>
+            
+            <div class="category-label">ESPORTES</div>
+            <div class="fav-list" id="cat-ESPORTES"></div>
+            
+            <button class="btn" style="font-size:8px; margin-top:auto;"
