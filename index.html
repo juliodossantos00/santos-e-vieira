@@ -41,8 +41,6 @@ body::before{
     background:rgba(0,0,0,0.9);
     display:flex;
     flex-direction:column;
-    position: relative;
-    z-index: 1;
 }
 
 /* HEADER */
@@ -141,10 +139,15 @@ input{
     overflow:hidden;
     box-shadow:0 0 20px rgba(255,0,0,0.4);
     background: #000;
+    transition: 0.5s; /* Suaviza a transição de tamanho */
 }
 
 .player-box { flex: 2; }
 .chat-box { flex: 1; }
+
+/* CLASSE PARA YOUTUBE (TELA CHEIA) */
+.full-width { flex: 100% !important; }
+.hidden { display: none !important; }
 
 iframe {
     width: 100%;
@@ -183,11 +186,11 @@ iframe {
             <button class="btn btn-system" onclick="location.reload()">REBOOT SYSTEM</button>
         </div>
 
-        <div class="player-box">
+        <div id="playerContainer" class="player-box">
             <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
         </div>
 
-        <div class="chat-box">
+        <div id="chatContainer" class="chat-box">
             <iframe id="chat" allowfullscreen></iframe>
         </div>
     </div>
@@ -211,6 +214,8 @@ function loadStream(type){
     const linkInput = document.getElementById('linkInput');
     const player = document.getElementById('player');
     const chat = document.getElementById('chat');
+    const playerContainer = document.getElementById('playerContainer');
+    const chatContainer = document.getElementById('chatContainer');
     
     let val = linkInput.value.trim();
     if(!val) return;
@@ -218,19 +223,26 @@ function loadStream(type){
     const host = window.location.hostname || "localhost";
 
     if(type === "twitch"){
+        // VOLTA AO LAYOUT NORMAL (VÍDEO + CHAT)
+        playerContainer.classList.remove('full-width');
+        chatContainer.classList.remove('hidden');
+
         if(val.includes("twitch.tv")) val = val.split("twitch.tv/")[1];
         player.src = `https://player.twitch.tv/?channel=${val}&parent=${host}`;
         chat.src = `https://www.twitch.tv/embed/${val}/chat?parent=${host}&darkpopout`;
     } else {
+        // LAYOUT YOUTUBE (VÍDEO TELA CHEIA, SEM CHAT)
+        playerContainer.classList.add('full-width');
+        chatContainer.classList.add('hidden');
+
         let videoId = val;
-        // Pega o ID de qualquer formato de link do YouTube
         if(val.includes("v=")) videoId = val.split("v=")[1].split("&")[0];
         else if(val.includes("youtu.be/")) videoId = val.split("youtu.be/")[1].split("?")[0];
         else if(val.includes("/live/")) videoId = val.split("/live/")[1].split("?")[0];
         else if(val.includes("/embed/")) videoId = val.split("/embed/")[1].split("?")[0];
 
         player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-        chat.src = `https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${host}`;
+        chat.src = "about:blank"; 
     }
 }
 </script>
