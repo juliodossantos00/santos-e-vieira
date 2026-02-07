@@ -10,7 +10,6 @@
     *{box-sizing:border-box}
     html,body{margin:0; width:100%; height:100%; background:#000; font-family:'Orbitron',sans-serif; overflow:hidden; color: #fff;}
     
-    /* GRID DE FUNDO DINÂMICO */
     body::before{content:""; position:fixed; inset:0; background: linear-gradient(var(--glow-color) 1px, transparent 1px), linear-gradient(90deg, var(--glow-color) 1px, transparent 1px); background-size:50px 50px; z-index:-1; opacity: 0.1;}
 
     .core-panel{width:98%; height:96%; margin:1% auto; border:2px solid var(--main-color); border-radius:5px; box-shadow:0 0 20px var(--glow-color), inset 0 0 15px var(--glow-color); background: var(--bg-panel); display:flex; flex-direction:column; position: relative;}
@@ -20,26 +19,21 @@
 
     .core-body{flex:1; display:flex; gap:15px; padding:15px; overflow: hidden;}
     
-    /* SIDEBAR TECH */
     .sidebar{width:280px; display:flex; flex-direction:column; gap:12px; background: rgba(255,0,0,0.03); padding: 15px; border: 1px solid rgba(255,0,0,0.2);}
     
     input{background: #080000; border: 1px solid var(--main-color); color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; outline: none; transition: 0.3s; box-shadow: inset 0 0 5px #000;}
     input:focus{box-shadow: 0 0 10px var(--glow-color); background: #110000;}
 
-    /* BOTÕES ESTILO HUD */
     .btn{
         padding:10px; background: transparent; color: var(--main-color); border: 1px solid var(--main-color); 
         cursor:pointer; text-transform:uppercase; font-size:10px; position: relative; overflow: hidden; transition: 0.3s;
         font-weight: bold; letter-spacing: 1px;
     }
     .btn:hover{background: var(--main-color); color: #000; box-shadow: 0 0 15px var(--main-color);}
-    .btn::after {content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s;}
-    .btn:hover::after {left: 100%;}
 
     .btn-add { border-color: #00ff00; color: #00ff00; }
     .btn-add:hover { background: #00ff00; box-shadow: 0 0 15px #00ff00; }
 
-    /* GERENCIADOR DE FAVORITOS */
     .fav-manager { border-top: 2px solid var(--main-color); padding-top: 15px; margin-top: 5px; display: flex; flex-direction: column; gap: 8px; }
     .fav-list{flex: 1; margin-top:10px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding-right: 5px;}
     
@@ -56,7 +50,6 @@
     .btn-del { color: var(--main-color); background: none; border: 1px solid var(--main-color); cursor: pointer; font-size: 10px; padding: 2px 8px; border-radius: 3px;}
     .btn-del:hover { background: var(--main-color); color: #000; }
 
-    /* PLAYERS */
     .player-box, .chat-box {border:1px solid var(--main-color); border-radius:4px; overflow:hidden; background:#000; box-shadow: 0 0 10px rgba(255,0,0,0.2);}
     .player-box { flex: 2; }
     .chat-box { flex: 1; }
@@ -73,34 +66,34 @@
 <body onload="startSystem()">
 <div class="core-panel">
     <div class="core-header">
-        <div><div class="core-title">SANTOS & VIEIRA</div><div style="font-size:9px; letter-spacing:2px;">CORE_INTERFACE_OS_v2.0</div></div>
+        <div><div class="core-title">SANTOS & VIEIRA</div><div style="font-size:9px; letter-spacing:2px;">INTERFACE DE COMANDO v2.0</div></div>
         <div id="clock">00:00:00</div>
     </div>
     
     <div class="core-body">
         <div class="sidebar">
-            <div style="font-size: 10px; color: var(--main-color); margin-bottom: 5px;">COMMAND_INPUT</div>
-            <input id="linkInput" placeholder="PASTE_URL_HERE...">
+            <div style="font-size: 10px; color: var(--main-color); margin-bottom: 5px;">> ENTRADA RÁPIDA</div>
+            <input id="linkInput" placeholder="COLE O LINK OU ID AQUI...">
             
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                <button class="btn" onclick="loadStream('twitch')">TWITCH_EXE</button>
-                <button class="btn" onclick="loadStream('yt')">YOUTUBE_EXE</button>
+                <button class="btn" onclick="loadStream('twitch')">ABRIR TWITCH</button>
+                <button class="btn" onclick="loadStream('yt')">ABRIR YOUTUBE</button>
             </div>
 
             <div class="fav-manager">
-                <div style="color:var(--main-color); font-size:10px; font-weight:bold;">> ADD_NEW_STATION</div>
-                <input id="favName" placeholder="STATION_NAME">
-                <input id="favId" placeholder="CHANNEL_ID_OR_URL">
+                <div style="color:var(--main-color); font-size:10px; font-weight:bold;">> SALVAR NOVO CANAL</div>
+                <input id="favName" placeholder="NOME DO CANAL (EX: CAZE)">
+                <input id="favId" placeholder="LINK OU ID DO CANAL">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                    <button class="btn btn-add" onclick="saveFav('twitch')">+ TWITCH</button>
-                    <button class="btn btn-add" onclick="saveFav('yt')">+ YOUTUBE</button>
+                    <button class="btn btn-add" onclick="saveFav('twitch')">+ SALVAR TWITCH</button>
+                    <button class="btn btn-add" onclick="saveFav('yt')">+ SALVAR YOUTUBE</button>
                 </div>
             </div>
             
-            <div style="color:var(--main-color); font-size:10px; margin-top:10px;">> SAVED_STATIONS</div>
+            <div style="color:var(--main-color); font-size:10px; margin-top:10px;">> CANAIS SALVOS</div>
             <div class="fav-list" id="favoritesList"></div>
             
-            <button class="btn" style="margin-top:auto; font-size:8px; opacity:0.6;" onclick="location.reload()">REBOOT_SYSTEM</button>
+            <button class="btn" style="margin-top:auto; font-size:8px; opacity:0.6;" onclick="location.reload()">REINICIAR SISTEMA</button>
         </div>
 
         <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen></iframe></div>
@@ -118,11 +111,23 @@ function startSystem(){
     }, 1000);
 }
 
+// FUNÇÃO PARA LIMPAR O LINK E PEGAR SÓ O ID
+function cleanID(val) {
+    let id = val.trim();
+    if(id.includes("v=")) id = id.split("v=")[1].split("&")[0];
+    else if(id.includes("/live/")) id = id.split("/live/")[1].split("?")[0];
+    else if(id.includes("youtu.be/")) id = id.split("youtu.be/")[1].split("?")[0];
+    else if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
+    return id;
+}
+
 function saveFav(type){
     const name = document.getElementById('favName').value.trim();
-    const id = document.getElementById('favId').value.trim();
+    let id = document.getElementById('favId').value.trim();
     if(!name || !id) return;
     
+    id = cleanID(id); // Limpa o link antes de salvar
+
     favorites.push({name, id, type});
     localStorage.setItem('sv_favs', JSON.stringify(favorites));
     renderFavs();
@@ -144,7 +149,7 @@ function renderFavs(){
             <div class="fav-item">
                 <div class="fav-info" onclick="quickLoad('${fav.id}', '${fav.type}')">
                     <span class="fav-name">${fav.name.toUpperCase()}</span>
-                    <span class="fav-type">${fav.type === 'yt' ? '[YT_SIGNAL]' : '[TW_SIGNAL]'}</span>
+                    <span class="fav-type">${fav.type === 'yt' ? '[SINAL YOUTUBE]' : '[SINAL TWITCH]'}</span>
                 </div>
                 <button class="btn-del" onclick="deleteFav(${index})">X</button>
             </div>`;
@@ -157,16 +162,27 @@ function quickLoad(id, type){
 }
 
 function loadStream(type){
-    const val = document.getElementById('linkInput').value.trim();
+    const valInput = document.getElementById('linkInput').value.trim();
     const player = document.getElementById('player');
     const chat = document.getElementById('chat');
     const pCont = document.getElementById('pContainer');
     const cCont = document.getElementById('cContainer');
     const host = window.location.hostname || "localhost";
 
+    let id = cleanID(valInput);
+
     if(type === 'twitch'){
         pCont.classList.remove('full-width');
         cCont.classList.remove('hidden');
-        let id = val.includes("twitch.tv") ? val.split("twitch.tv/")[1] : val;
         player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
-        chat.src =
+        chat.src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
+    } else {
+        pCont.classList.add('full-width');
+        cCont.classList.add('hidden');
+        player.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+        chat.src = "about:blank";
+    }
+}
+</script>
+</body>
+</html>
