@@ -108,19 +108,20 @@
             <button class="btn" style="margin-top:auto; font-size:8px;" onclick="location.reload()">REINICIAR</button>
         </div>
 
-        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen></iframe></div>
+        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"></iframe></div>
         <div id="cContainer" class="chat-box"><iframe id="chat" allowfullscreen></iframe></div>
     </div>
 </div>
 
 <script>
+    // RELÓGIO E SISTEMA BASE
     let defaultFavs = [
-        { name: "CazéTV", id: "CazeTV", type: "yt", cat: "ESPORTES" },
+        { name: "CazéTV", id: "UC_O_9O8G3uX_5p79_n9oA_A", type: "yt", cat: "ESPORTES" },
         { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
         { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" }
     ];
 
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v201')) || defaultFavs;
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v202')) || defaultFavs;
 
     function initSystem(){
         renderFavs();
@@ -152,27 +153,33 @@
             loadStream(id, type);
         } else {
             favorites.push({ name: id.toUpperCase(), id, type, cat: document.getElementById('favCat').value });
-            localStorage.setItem('sv_favs_v201', JSON.stringify(favorites));
+            localStorage.setItem('sv_favs_v202', JSON.stringify(favorites));
             renderFavs();
             inputEl.value = "";
         }
     }
 
     function renderFavs(){
-        ["CONVERSA", "GAMES", "ESPORTES"].forEach(c => document.getElementById(`cat-${c}`).innerHTML = "");
+        ["CONVERSA", "GAMES", "ESPORTES"].forEach(c => {
+            const el = document.getElementById(`cat-${c}`);
+            if(el) el.innerHTML = "";
+        });
         favorites.forEach((fav, index) => {
             let listId = fav.cat === "SÓ NA CONVERSA" ? "cat-CONVERSA" : `cat-${fav.cat}`;
-            document.getElementById(listId).innerHTML += `
+            const list = document.getElementById(listId);
+            if(list) {
+                list.innerHTML += `
                 <div class="fav-item" onclick="loadStream('${fav.id}', '${fav.type}')">
                     <div class="fav-info">${fav.name.toUpperCase()}</div>
                     <button class="btn-del" onclick="event.stopPropagation(); deleteFav(${index})">X</button>
                 </div>`;
+            }
         });
     }
 
     function deleteFav(index){
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v201', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v202', JSON.stringify(favorites));
         renderFavs();
     }
 
@@ -188,18 +195,21 @@
             player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
             document.getElementById('chat').src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
         } else {
-            // SOLUÇÃO PARA YOUTUBE BLOQUEADO:
-            // Ele tenta carregar o embed, mas abre o link oficial em outra aba para garantir que você veja a live
             pCont.classList.add('full-width');
             cCont.classList.add('hidden');
             
-            let ytLink = id.includes("UC") ? `https://www.youtube.com/channel/${id}/live` : `https://www.youtube.com/@${id}/live`;
+            // VACINA CONTRA BLOQUEIO: youtube-nocookie + origin fix
+            // Se for ID de canal (CazéTV), usa o link de live_stream
+            let finalUrl;
+            if(id.startsWith("UC")) {
+                finalUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=${id}&autoplay=1&mute=0&rel=0&origin=https://${host}`;
+            } else {
+                finalUrl = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=0&rel=0&origin=https://${host}`;
+            }
+            player.src = finalUrl;
             
-            // Abre a live oficial na outra aba para burlar o bloqueio de direitos autorais
-            window.open(ytLink, '_blank');
-            
-            // No player do sistema, ele tenta carregar o modo seguro
-            player.src = `https://www.youtube.com/embed/live_stream?channel=${id}`;
+            // Se o YouTube bloquear mesmo assim, clique de novo no nome para abrir fora.
+            console.log("Tentando carregar YouTube Core...");
         }
     }
 </script>
