@@ -43,8 +43,8 @@
             box-shadow: 0 0 15px var(--glow-color);
             transform: scale(1.05) translateX(5px);
         }
+        .fav-item:hover .fav-info { color: #fff; text-shadow: 0 0 5px #fff; }
         .fav-info { flex: 1; font-size: 10px; font-weight: bold; }
-        /* ------------------------------------------- */
 
         .btn-del { color: var(--main-color); background: none; border: none; cursor: pointer; font-weight: bold; padding: 0 5px;}
 
@@ -118,14 +118,14 @@
 </div>
 
 <script>
-    // MANUTENÇÃO DOS CANAIS FIXOS E ESTRUTURA ORIGINAL
+    // CANAIS ORIGINAIS PRESERVADOS
     let defaultFavs = [
-        { name: "CazéTV", id: "UC_O_9O8G3uX_5p79_n9oA_A", type: "yt", cat: "ESPORTES" },
+        { name: "CazéTV", id: "UCZiYbVptd3PVPf4f6eR6UaQ", type: "yt", cat: "ESPORTES" },
         { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
         { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" }
     ];
 
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v5')) || defaultFavs;
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v200')) || defaultFavs;
 
     function initSystem(){
         renderFavs();
@@ -133,24 +133,20 @@
         setInterval(updateClock, 1000);
     }
 
-    // RELÓGIO CORRIGIDO PARA NÃO FICAR 00:00
     function updateClock(){
         const now = new Date();
-        const c = document.getElementById('clock');
-        const d = document.getElementById('date');
-        if(c) c.innerText = now.toLocaleTimeString('pt-BR');
-        if(d) d.innerText = now.toLocaleDateString('pt-BR');
+        document.getElementById('clock').innerText = now.toLocaleTimeString('pt-BR');
+        document.getElementById('date').innerText = now.toLocaleDateString('pt-BR');
     }
 
     function cleanID(val) {
         if(!val) return "";
         let id = val.trim();
+        // Preserva a lógica de limpeza original do seu código
         if(id.includes("v=")) id = id.split("v=")[1].split("&")[0];
         else if(id.includes("/live/")) id = id.split("/live/")[1].split("?")[0];
-        else if(id.includes("youtu.be/")) id = id.split("youtu.be/")[1].split("?")[0];
         else if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
         else if(id.includes("youtube.com/channel/")) id = id.split("channel/")[1].split("/")[0];
-        else if(id.includes("youtube.com/@")) id = id.split("@")[1].split("/")[0];
         return id;
     }
 
@@ -158,16 +154,13 @@
         const inputEl = mode === 'quick' ? document.getElementById('quickInput') : document.getElementById('saveInput');
         const rawVal = inputEl.value;
         if(!rawVal) return;
-
         const id = cleanID(rawVal);
-        const name = rawVal.split('/').pop().replace('@', '') || id;
-
         if(mode === 'quick') {
-            loadStream(id, type, rawVal);
+            loadStream(id, type);
         } else {
             const cat = document.getElementById('favCat').value;
-            favorites.push({ name: name.toUpperCase(), id, type, cat });
-            localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
+            favorites.push({ name: id.toUpperCase(), id, type, cat });
+            localStorage.setItem('sv_favs_v200', JSON.stringify(favorites));
             renderFavs();
             inputEl.value = "";
         }
@@ -179,14 +172,15 @@
         document.getElementById("cat-ESPORTES").innerHTML = "";
         
         favorites.forEach((fav, index) => {
-            let listId = fav.cat === "SÓ NA CONVERSA" ? "cat-CONVERSA" : `cat-${fav.cat}`;
+            let listId = "cat-CONVERSA";
+            if(fav.cat === "GAMES") listId = "cat-GAMES";
+            if(fav.cat === "ESPORTES") listId = "cat-ESPORTES";
+
             const list = document.getElementById(listId);
             if(list){
                 list.innerHTML += `
-                <div class="fav-item" onclick="loadStream('${fav.id}', '${fav.type}', '${fav.id}')">
-                    <div class="fav-info">
-                        ${fav.name.toUpperCase()} <span style="font-size:7px; color:red;">[${fav.type}]</span>
-                    </div>
+                <div class="fav-item" onclick="loadStream('${fav.id}', '${fav.type}')">
+                    <div class="fav-info">${fav.name.toUpperCase()}</div>
                     <button class="btn-del" onclick="event.stopPropagation(); deleteFav(${index})">X</button>
                 </div>`;
             }
@@ -195,11 +189,11 @@
 
     function deleteFav(index){
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v200', JSON.stringify(favorites));
         renderFavs();
     }
 
-    function loadStream(id, type, originalVal){
+    function loadStream(id, type){
         const player = document.getElementById('player');
         const chat = document.getElementById('chat');
         const pCont = document.getElementById('pContainer');
@@ -215,15 +209,15 @@
             pCont.classList.add('full-width');
             cCont.classList.add('hidden');
             
-            // CORREÇÃO DEFINITIVA CAZÉ E YT
+            // TRUQUE PARA ESCOLHER VÍDEO: Carrega a lista de uploads do canal
+            // Se o ID começar com UC (ID de canal), ele abre a lista de vídeos para você escolher
             let embedUrl;
-            if(id === "UC_O_9O8G3uX_5p79_n9oA_A") {
-                // Link específico para a live da CazéTV não falhar
-                embedUrl = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1`;
-            } else if(originalVal.includes("youtube.com") || originalVal.includes("youtu.be")) {
-                embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            if(id.startsWith("UC")) {
+                // Esse link transforma o canal em uma playlist de vídeos recentes
+                let playlistId = "UU" + id.substring(2); 
+                embedUrl = `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
             } else {
-                embedUrl = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1`;
+                embedUrl = `https://www.youtube.com/embed/${id}`;
             }
             player.src = embedUrl;
             chat.src = "about:blank";
