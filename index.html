@@ -3,249 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SANTOS & VIEIRA | SYSTEM CORE</title>
-
+<title>SANTOS & VIEIRA | SYSTEM CORE v2.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
-*{box-sizing:border-box}
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    background:#000;
-    font-family:'Orbitron',sans-serif;
-    overflow:hidden;
-}
+    :root { --main-color: #ff0000; --glow-color: rgba(255, 0, 0, 0.6); --bg-panel: rgba(10, 0, 0, 0.95); }
+    *{box-sizing:border-box}
+    html,body{margin:0; width:100%; height:100%; background:#000; font-family:'Orbitron',sans-serif; overflow:hidden; color: #fff;}
+    
+    /* GRID DE FUNDO DINÂMICO */
+    body::before{content:""; position:fixed; inset:0; background: linear-gradient(var(--glow-color) 1px, transparent 1px), linear-gradient(90deg, var(--glow-color) 1px, transparent 1px); background-size:50px 50px; z-index:-1; opacity: 0.1;}
 
-/* FUNDO GRID FUTURISTA */
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background:
-        linear-gradient(rgba(255,0,0,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,0,0,0.05) 1px, transparent 1px);
-    background-size:40px 40px;
-    z-index:-1;
-}
+    .core-panel{width:98%; height:96%; margin:1% auto; border:2px solid var(--main-color); border-radius:5px; box-shadow:0 0 20px var(--glow-color), inset 0 0 15px var(--glow-color); background: var(--bg-panel); display:flex; flex-direction:column; position: relative;}
 
-/* PAINEL PRINCIPAL */
-.core-panel{
-    width:98%;
-    height:96%;
-    margin:1% auto;
-    border:2px solid #ff0000;
-    border-radius:16px;
-    box-shadow:0 0 30px #ff0000;
-    background:rgba(0,0,0,0.9);
-    display:flex;
-    flex-direction:column;
-}
+    .core-header{display:flex; justify-content:space-between; align-items:center; padding:15px 25px; border-bottom:2px solid var(--main-color); background:rgba(255,0,0,0.1); clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%);}
+    .core-title{color:var(--main-color); font-size:24px; letter-spacing:5px; text-shadow:0 0 10px var(--main-color); font-weight: 700;}
 
-/* HEADER */
-.core-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px 20px;
-    border-bottom:2px solid #ff0000;
-    background:linear-gradient(90deg, rgba(255,0,0,0.2), transparent);
-}
+    .core-body{flex:1; display:flex; gap:15px; padding:15px; overflow: hidden;}
+    
+    /* SIDEBAR TECH */
+    .sidebar{width:280px; display:flex; flex-direction:column; gap:12px; background: rgba(255,0,0,0.03); padding: 15px; border: 1px solid rgba(255,0,0,0.2);}
+    
+    input{background: #080000; border: 1px solid var(--main-color); color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; outline: none; transition: 0.3s; box-shadow: inset 0 0 5px #000;}
+    input:focus{box-shadow: 0 0 10px var(--glow-color); background: #110000;}
 
-.core-title{
-    color:#ff0000;
-    font-size:22px;
-    letter-spacing:3px;
-    text-shadow:0 0 12px #ff0000;
-}
+    /* BOTÕES ESTILO HUD */
+    .btn{
+        padding:10px; background: transparent; color: var(--main-color); border: 1px solid var(--main-color); 
+        cursor:pointer; text-transform:uppercase; font-size:10px; position: relative; overflow: hidden; transition: 0.3s;
+        font-weight: bold; letter-spacing: 1px;
+    }
+    .btn:hover{background: var(--main-color); color: #000; box-shadow: 0 0 15px var(--main-color);}
+    .btn::after {content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s;}
+    .btn:hover::after {left: 100%;}
 
-.core-sub{
-    color:#fff;
-    font-size:10px;
-    letter-spacing:2px;
-    opacity:0.8;
-}
+    .btn-add { border-color: #00ff00; color: #00ff00; }
+    .btn-add:hover { background: #00ff00; box-shadow: 0 0 15px #00ff00; }
 
-.datetime{
-    text-align:right;
-    color:#fff;
-}
+    /* GERENCIADOR DE FAVORITOS */
+    .fav-manager { border-top: 2px solid var(--main-color); padding-top: 15px; margin-top: 5px; display: flex; flex-direction: column; gap: 8px; }
+    .fav-list{flex: 1; margin-top:10px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding-right: 5px;}
+    
+    .fav-item{
+        display:flex; align-items:center; justify-content:space-between; background:rgba(255,0,0,0.05); 
+        padding:10px; border: 1px solid rgba(255,0,0,0.3); border-left: 5px solid var(--main-color);
+        position: relative; transition: 0.3s;
+    }
+    .fav-item:hover { background: rgba(255,0,0,0.15); transform: translateX(5px); }
+    .fav-info { cursor: pointer; flex: 1; }
+    .fav-name{color:#fff; font-size:11px; display: block; letter-spacing: 1px;}
+    .fav-type{color:var(--main-color); font-size:8px; font-weight: bold; opacity: 0.7;}
+    
+    .btn-del { color: var(--main-color); background: none; border: 1px solid var(--main-color); cursor: pointer; font-size: 10px; padding: 2px 8px; border-radius: 3px;}
+    .btn-del:hover { background: var(--main-color); color: #000; }
 
-#clock{
-    font-size:20px;
-    text-shadow:0 0 8px #fff;
-}
+    /* PLAYERS */
+    .player-box, .chat-box {border:1px solid var(--main-color); border-radius:4px; overflow:hidden; background:#000; box-shadow: 0 0 10px rgba(255,0,0,0.2);}
+    .player-box { flex: 2; }
+    .chat-box { flex: 1; }
+    .full-width { flex: 100% !important; }
+    .hidden { display: none !important; }
+    iframe {width: 100%; height: 100%; border: none; display: block;}
 
-#date{
-    font-size:12px;
-    color:#ff0000;
-}
+    #clock { font-size: 22px; color: var(--main-color); text-shadow: 0 0 10px var(--main-color); }
 
-/* CONTEÚDO */
-.core-body{
-    flex:1;
-    display:flex;
-    gap:14px;
-    padding:14px;
-    overflow: hidden;
-}
-
-/* SIDEBAR */
-.sidebar{
-    width:240px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-input{
-    background:#000;
-    border:2px solid #ff0000;
-    color:#fff;
-    padding:12px;
-    font-family: 'Orbitron', sans-serif;
-    outline:none;
-    box-shadow:0 0 12px rgba(255,0,0,0.4);
-}
-
-.btn{
-    padding:12px;
-    background:#111;
-    color:#ff0000;
-    border:2px solid #ff0000;
-    font-family: 'Orbitron', sans-serif;
-    cursor:pointer;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    box-shadow:0 0 15px #ff0000;
-    transition:0.3s;
-}
-
-.btn:hover{
-    background:#ff0000;
-    color:#000;
-}
-
-.btn-system{
-    margin-top:auto;
-    font-size:11px;
-}
-
-/* CONTAINERS DOS IFRAMES */
-.player-box, .chat-box {
-    border:2px solid #ff0000;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 0 20px rgba(255,0,0,0.4);
-    background: #000;
-    transition: 0.5s; /* Suaviza a transição de tamanho */
-}
-
-.player-box { flex: 2; }
-.chat-box { flex: 1; }
-
-/* CLASSE PARA YOUTUBE (TELA CHEIA) */
-.full-width { flex: 100% !important; }
-.hidden { display: none !important; }
-
-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-@media(max-width:900px){
-    .core-body{flex-direction:column; overflow-y: auto;}
-    .sidebar{width:100%}
-    .player-box, .chat-box { min-height: 300px; }
-}
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--main-color); }
 </style>
 </head>
-
 <body onload="startSystem()">
-
 <div class="core-panel">
     <div class="core-header">
-        <div>
-            <div class="core-title">SANTOS & VIEIRA</div>
-            <div class="core-sub">SYSTEM CORE INTERFACE</div>
-        </div>
-        <div class="datetime">
-            <div id="clock">--:--:--</div>
-            <div id="date">--/--/----</div>
-        </div>
+        <div><div class="core-title">SANTOS & VIEIRA</div><div style="font-size:9px; letter-spacing:2px;">CORE_INTERFACE_OS_v2.0</div></div>
+        <div id="clock">00:00:00</div>
     </div>
-
+    
     <div class="core-body">
         <div class="sidebar">
-            <input id="linkInput" placeholder="LINK / CANAL">
-            <button class="btn" onclick="loadStream('twitch')">TWITCH</button>
-            <button class="btn" onclick="loadStream('yt')">YOUTUBE</button>
-            <button class="btn btn-system" onclick="location.reload()">REBOOT SYSTEM</button>
+            <div style="font-size: 10px; color: var(--main-color); margin-bottom: 5px;">COMMAND_INPUT</div>
+            <input id="linkInput" placeholder="PASTE_URL_HERE...">
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                <button class="btn" onclick="loadStream('twitch')">TWITCH_EXE</button>
+                <button class="btn" onclick="loadStream('yt')">YOUTUBE_EXE</button>
+            </div>
+
+            <div class="fav-manager">
+                <div style="color:var(--main-color); font-size:10px; font-weight:bold;">> ADD_NEW_STATION</div>
+                <input id="favName" placeholder="STATION_NAME">
+                <input id="favId" placeholder="CHANNEL_ID_OR_URL">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                    <button class="btn btn-add" onclick="saveFav('twitch')">+ TWITCH</button>
+                    <button class="btn btn-add" onclick="saveFav('yt')">+ YOUTUBE</button>
+                </div>
+            </div>
+            
+            <div style="color:var(--main-color); font-size:10px; margin-top:10px;">> SAVED_STATIONS</div>
+            <div class="fav-list" id="favoritesList"></div>
+            
+            <button class="btn" style="margin-top:auto; font-size:8px; opacity:0.6;" onclick="location.reload()">REBOOT_SYSTEM</button>
         </div>
 
-        <div id="playerContainer" class="player-box">
-            <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
-        </div>
-
-        <div id="chatContainer" class="chat-box">
-            <iframe id="chat" allowfullscreen></iframe>
-        </div>
+        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen></iframe></div>
+        <div id="cContainer" class="chat-box"><iframe id="chat" allowfullscreen></iframe></div>
     </div>
 </div>
 
 <script>
+let favorites = JSON.parse(localStorage.getItem('sv_favs')) || [];
+
 function startSystem(){
-    updateTime();
-    setInterval(updateTime,1000);
+    renderFavs();
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
+    }, 1000);
 }
 
-function updateTime(){
-    const clockEl = document.getElementById('clock');
-    const dateEl = document.getElementById('date');
-    const now = new Date();
-    if(clockEl) clockEl.innerText = now.toLocaleTimeString('pt-BR');
-    if(dateEl) dateEl.innerText = now.toLocaleDateString('pt-BR');
+function saveFav(type){
+    const name = document.getElementById('favName').value.trim();
+    const id = document.getElementById('favId').value.trim();
+    if(!name || !id) return;
+    
+    favorites.push({name, id, type});
+    localStorage.setItem('sv_favs', JSON.stringify(favorites));
+    renderFavs();
+    document.getElementById('favName').value = "";
+    document.getElementById('favId').value = "";
+}
+
+function deleteFav(index){
+    favorites.splice(index, 1);
+    localStorage.setItem('sv_favs', JSON.stringify(favorites));
+    renderFavs();
+}
+
+function renderFavs(){
+    const list = document.getElementById('favoritesList');
+    list.innerHTML = "";
+    favorites.forEach((fav, index) => {
+        list.innerHTML += `
+            <div class="fav-item">
+                <div class="fav-info" onclick="quickLoad('${fav.id}', '${fav.type}')">
+                    <span class="fav-name">${fav.name.toUpperCase()}</span>
+                    <span class="fav-type">${fav.type === 'yt' ? '[YT_SIGNAL]' : '[TW_SIGNAL]'}</span>
+                </div>
+                <button class="btn-del" onclick="deleteFav(${index})">X</button>
+            </div>`;
+    });
+}
+
+function quickLoad(id, type){
+    document.getElementById('linkInput').value = id;
+    loadStream(type);
 }
 
 function loadStream(type){
-    const linkInput = document.getElementById('linkInput');
+    const val = document.getElementById('linkInput').value.trim();
     const player = document.getElementById('player');
     const chat = document.getElementById('chat');
-    const playerContainer = document.getElementById('playerContainer');
-    const chatContainer = document.getElementById('chatContainer');
-    
-    let val = linkInput.value.trim();
-    if(!val) return;
-
+    const pCont = document.getElementById('pContainer');
+    const cCont = document.getElementById('cContainer');
     const host = window.location.hostname || "localhost";
 
-    if(type === "twitch"){
-        // VOLTA AO LAYOUT NORMAL (VÍDEO + CHAT)
-        playerContainer.classList.remove('full-width');
-        chatContainer.classList.remove('hidden');
-
-        if(val.includes("twitch.tv")) val = val.split("twitch.tv/")[1];
-        player.src = `https://player.twitch.tv/?channel=${val}&parent=${host}`;
-        chat.src = `https://www.twitch.tv/embed/${val}/chat?parent=${host}&darkpopout`;
-    } else {
-        // LAYOUT YOUTUBE (VÍDEO TELA CHEIA, SEM CHAT)
-        playerContainer.classList.add('full-width');
-        chatContainer.classList.add('hidden');
-
-        let videoId = val;
-        if(val.includes("v=")) videoId = val.split("v=")[1].split("&")[0];
-        else if(val.includes("youtu.be/")) videoId = val.split("youtu.be/")[1].split("?")[0];
-        else if(val.includes("/live/")) videoId = val.split("/live/")[1].split("?")[0];
-        else if(val.includes("/embed/")) videoId = val.split("/embed/")[1].split("?")[0];
-
-        player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-        chat.src = "about:blank"; 
-    }
-}
-</script>
-
-</body>
-</html>
+    if(type === 'twitch'){
+        pCont.classList.remove('full-width');
+        cCont.classList.remove('hidden');
+        let id = val.includes("twitch.tv") ? val.split("twitch.tv/")[1] : val;
+        player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
+        chat.src =
