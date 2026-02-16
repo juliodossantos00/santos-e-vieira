@@ -1,151 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>SANTOS & VIEIRA | DASHBOARD</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: #050505; 
-            color: #eee; 
-            font-family: Arial, sans-serif;
-            height: 100vh;
-            display: flex;
-        }
-
-        /* SIDEBAR SÓLIDA */
-        .sidebar {
-            width: 300px;
-            background: #111;
-            border-right: 2px solid #333;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-        }
-
-        .header-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff0000;
-            margin-bottom: 20px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        .section { margin-bottom: 25px; }
-        .label { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 8px; display: block; }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            background: #000;
-            border: 1px solid #444;
-            color: #fff;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            border: none;
-            margin-bottom: 5px;
-            transition: 0.2s;
-        }
-
-        .btn-watch { background: #ff0000; color: #fff; }
-        .btn-watch:hover { background: #cc0000; }
-        .btn-save { background: #333; color: #ccc; }
-        .btn-save:hover { background: #444; color: #fff; }
-
-        /* LISTA DE FAVORITOS */
-        .fav-list { border-top: 1px solid #333; padding-top: 10px; max-height: 300px; overflow-y: auto; }
-        .fav-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: #1a1a1a;
-            margin-bottom: 5px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .fav-item:hover { background: #222; }
-        .fav-item .del { color: #666; font-size: 16px; padding: 0 5px; }
-        .fav-item .del:hover { color: #ff0000; }
-
-        /* AREA DAS LIVES */
-        .main-view {
-            flex: 1;
-            background: #000;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
-            gap: 10px;
-            padding: 10px;
-            overflow-y: auto;
-        }
-
-        .player-box {
-            background: #000;
-            border: 1px solid #222;
-            display: flex;
-            aspect-ratio: 16 / 9;
-            position: relative;
-        }
-
-        .video-part { flex: 3; height: 100%; }
-        .chat-part { flex: 1; height: 100%; border-left: 1px solid #222; background: #080808; }
-        
-        .close-live {
-            position: absolute; top: 5px; right: 5px; z-index: 10;
-            background: rgba(255,0,0,0.7); color: white; border: none; 
-            width: 25px; height: 25px; cursor: pointer; font-weight: bold;
-        }
-
-        iframe { width: 100%; height: 100%; border: none; }
-    </style>
-</head>
-<body onload="renderFavs()">
-
-    <div class="sidebar">
-        <div class="header-title">SANTOS & VIEIRA</div>
-
-        <div class="section">
-            <span class="label">Acesso Rápido (Não Salva)</span>
-            <input id="streamID" placeholder="Nome do Canal...">
-            <div style="display: flex; gap: 5px;">
-                <button class="btn btn-watch" onclick="openLive('twitch')">TWITCH</button>
-                <button class="btn btn-watch" style="background: #00e701; color: #000;" onclick="openLive('kick')">KICK</button>
-            </div>
-        </div>
-
-        <div class="section">
-            <span class="label">Configurar Favorito</span>
-            <input id="favID" placeholder="Canal para salvar...">
-            <div style="display: flex; gap: 5px;">
-                <button class="btn btn-save" onclick="addFav('twitch')">+ Twitch</button>
-                <button class="btn btn-save" onclick="addFav('kick')">+ Kick</button>
-            </div>
-        </div>
-
-        <div class="section">
-            <span class="label">Canais Salvos</span>
-            <div id="favList" class="fav-list"></div>
-        </div>
-
-        <button class="btn btn-save" style="margin-top: auto; font-size: 10px;" onclick="location.reload()">RECARREGAR SITE</button>
-    </div>
-
-    <div id="mainView" class="main-view">
-        </div>
-
-<script>
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v5')) || [];
-
-    function openLive(type, id = null) {
+function openLive(type, id = null) {
         const canal = id || document.getElementById('streamID').value.trim();
         if(!canal) return;
 
@@ -160,9 +13,11 @@
             vUrl = `https://player.twitch.tv/?channel=${canal}&parent=${host}`;
             cUrl = `https://www.twitch.tv/embed/${canal}/chat?parent=${host}&darkpopout`;
         } else {
-            // Player e Chat da Kick (carrega mesmo offline)
+            // PLAYER DA KICK
             vUrl = `https://player.kick.com/${canal}`;
-            cUrl = `https://kick.com/chat/${canal}`;
+            // CHAT DA KICK MODO LIMPO (POPOUT)
+            // Esse link remove as bordas e botões desnecessários
+            cUrl = `https://kick.com/popout/${canal}/chat`;
         }
 
         box.innerHTML = `
@@ -174,34 +29,3 @@
         mainView.appendChild(box);
         if(!id) document.getElementById('streamID').value = "";
     }
-
-    function addFav(type) {
-        const id = document.getElementById('favID').value.trim();
-        if(!id) return;
-        favorites.push({ id, type });
-        localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
-        renderFavs();
-        document.getElementById('favID').value = "";
-    }
-
-    function renderFavs() {
-        const list = document.getElementById('favList');
-        list.innerHTML = "";
-        favorites.forEach((fav, index) => {
-            list.innerHTML += `
-                <div class="fav-item" onclick="openLive('${fav.type}', '${fav.id}')">
-                    <span><strong>[${fav.type.toUpperCase()}]</strong> ${fav.id}</span>
-                    <span class="del" onclick="event.stopPropagation(); removeFav(${index})">×</span>
-                </div>
-            `;
-        });
-    }
-
-    function removeFav(index) {
-        favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
-        renderFavs();
-    }
-</script>
-</body>
-</html>
