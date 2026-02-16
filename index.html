@@ -81,7 +81,7 @@
             <input id="quickInput" placeholder="NOME OU LINK DO CANAL">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                 <button class="btn" onclick="processInput('quick', 'twitch')">TWITCH</button>
-                <button class="btn" onclick="processInput('quick', 'yt')">YOUTUBE</button>
+                <button class="btn" onclick="processInput('quick', 'kick')">KICK</button>
             </div>
 
             <div style="border-top: 1px solid var(--main-color); padding-top: 15px; margin-top: 10px;">
@@ -94,7 +94,7 @@
                 </select>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                     <button class="btn" onclick="processInput('save', 'twitch')">+ TWITCH</button>
-                    <button class="btn" onclick="processInput('save', 'yt')">+ YOUTUBE</button>
+                    <button class="btn" onclick="processInput('save', 'kick')">+ KICK</button>
                 </div>
             </div>
             
@@ -108,7 +108,7 @@
             <button class="btn" style="margin-top:auto; font-size:8px;" onclick="location.reload()">REINICIAR</button>
         </div>
 
-        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"></iframe></div>
+        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen></iframe></div>
         <div id="cContainer" class="chat-box"><iframe id="chat" allowfullscreen></iframe></div>
     </div>
 </div>
@@ -116,7 +116,6 @@
 <script>
     // RELÓGIO E SISTEMA BASE
     let defaultFavs = [
-        { name: "CazéTV", id: "UC_O_9O8G3uX_5p79_n9oA_A", type: "yt", cat: "ESPORTES" },
         { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
         { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" }
     ];
@@ -138,10 +137,8 @@
     function cleanID(val) {
         if(!val) return "";
         let id = val.trim();
-        if(id.includes("v=")) id = id.split("v=")[1].split("&")[0];
-        else if(id.includes("/live/")) id = id.split("/live/")[1].split("?")[0];
-        else if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
-        else if(id.includes("youtube.com/@")) id = id.split("@")[1];
+        if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
+        else if(id.includes("kick.com/")) id = id.split("kick.com/")[1].split("?")[0];
         return id;
     }
 
@@ -194,22 +191,14 @@
             cCont.classList.remove('hidden');
             player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
             document.getElementById('chat').src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
-        } else {
-            pCont.classList.add('full-width');
-            cCont.classList.add('hidden');
+        } else if(type === 'kick') {
+            pCont.classList.remove('full-width');
+            cCont.classList.remove('hidden');
             
-            // VACINA CONTRA BLOQUEIO: youtube-nocookie + origin fix
-            // Se for ID de canal (CazéTV), usa o link de live_stream
-            let finalUrl;
-            if(id.startsWith("UC")) {
-                finalUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=${id}&autoplay=1&mute=0&rel=0&origin=https://${host}`;
-            } else {
-                finalUrl = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=0&rel=0&origin=https://${host}`;
-            }
-            player.src = finalUrl;
-            
-            // Se o YouTube bloquear mesmo assim, clique de novo no nome para abrir fora.
-            console.log("Tentando carregar YouTube Core...");
+            // Player Kick
+            player.src = `https://player.kick.com/${id}`;
+            // Chat Kick
+            document.getElementById('chat').src = `https://kick.com/chat/${id}`;
         }
     }
 </script>
