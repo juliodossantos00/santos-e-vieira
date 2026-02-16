@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SANTOS & VIEIRA | MONITOR V11</title>
+    <title>SANTOS & VIEIRA | MONITOR SINGLE</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -71,26 +71,22 @@
             cursor: pointer; font-size: 13px;
         }
 
-        /* ÁREA DE EXIBIÇÃO - AGORA OCUPA TUDO */
+        /* ÁREA DE EXIBIÇÃO ÚNICA */
         .main-view {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 0; /* Tirei o padding para ganhar cada pixel */
-            overflow-y: auto;
+            padding: 0;
+            overflow: hidden; /* Remove scroll pois só haverá uma tela */
             background: var(--bg-dark);
         }
 
-        /* CONTAINER QUE CRESCE PARA BAIXO */
         .live-container {
             display: flex;
             width: 100%;
-            /* Se houver apenas uma live, ela tenta ocupar quase a tela toda */
-            min-height: 80vh; 
+            height: 100vh; /* Ocupa a altura total da tela sempre */
             background: #000;
-            border-bottom: 2px solid #292d3e;
             position: relative;
-            flex-shrink: 0;
         }
 
         .video-wrapper {
@@ -99,7 +95,6 @@
             background: #000;
         }
 
-        /* CHAT LATERAL */
         .chat-wrapper {
             width: 350px;
             height: 100%;
@@ -135,13 +130,6 @@
             font-size: 14px;
         }
 
-        .close-live-btn {
-            position: absolute; top: 15px; left: 15px; z-index: 110;
-            background: rgba(255,0,0,0.7); color: white; border: none;
-            width: 28px; height: 28px; cursor: pointer; border-radius: 50%;
-            font-weight: bold;
-        }
-
         iframe { width: 100%; height: 100%; border: none; display: block; }
     </style>
 </head>
@@ -171,10 +159,14 @@
         </div>
     </div>
 
-    <div id="mainView" class="main-view"></div>
+    <div id="mainView" class="main-view">
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #444;">
+            Selecione um canal para iniciar o monitoramento
+        </div>
+    </div>
 
 <script>
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v11')) || [];
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v12')) || [];
 
     function toggleSidebar() {
         const sb = document.getElementById('sidebar');
@@ -194,16 +186,12 @@
 
         const mainView = document.getElementById('mainView');
         const host = window.location.hostname || "localhost";
+        
+        // LIMPA A TELA ANTES DE ADICIONAR A NOVA (Remove função multi-tela)
+        mainView.innerHTML = "";
+
         const container = document.createElement('div');
         container.className = 'live-container';
-
-        // Ajuste de altura automática: se for a única live, ocupa 95% da altura disponível
-        const liveCount = document.querySelectorAll('.live-container').length;
-        if(liveCount === 0) {
-            container.style.height = "calc(100vh)";
-        } else {
-            container.style.height = "50vh";
-        }
 
         let vUrl, cUrl;
         if(type === 'twitch') {
@@ -222,7 +210,6 @@
         ` : "";
 
         container.innerHTML = `
-            <button class="close-live-btn" onclick="this.parentElement.remove()">×</button>
             <div class="video-wrapper">
                 <iframe src="${vUrl}" allow="fullscreen"></iframe>
             </div>
@@ -237,7 +224,7 @@
         const id = document.getElementById('favID').value.trim();
         if(!id) return;
         favorites.push({ id, type });
-        localStorage.setItem('sv_favs_v11', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v12', JSON.stringify(favorites));
         renderFavs();
         document.getElementById('favID').value = "";
     }
@@ -258,7 +245,7 @@
 
     function removeFav(index) {
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v11', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v12', JSON.stringify(favorites));
         renderFavs();
     }
 </script>
