@@ -2,237 +2,205 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SANTOS & VIEIRA | MONITOR v5.0</title>
+    <title>SANTOS & VIEIRA | DASHBOARD</title>
     <style>
-        /* RESET E CORES FRIAS */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            background: #0a0a0a; 
-            color: #d1d1d1; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #050505; 
+            color: #eee; 
+            font-family: Arial, sans-serif;
             height: 100vh;
             display: flex;
-            flex-direction: column;
-            overflow: hidden;
         }
 
-        /* HEADER DISCRETO */
-        header {
-            padding: 10px 20px;
-            background: #000;
-            border-bottom: 1px solid #222;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo { font-weight: bold; letter-spacing: 1px; font-size: 14px; color: #eee; }
-        #clock { font-family: monospace; font-size: 14px; color: #666; }
-
-        main { display: flex; flex: 1; overflow: hidden; }
-
-        /* SIDEBAR MINIMALISTA */
+        /* SIDEBAR SÓLIDA */
         .sidebar {
-            width: 240px;
-            background: #0d0d0d;
-            border-right: 1px solid #222;
-            padding: 20px;
+            width: 300px;
+            background: #111;
+            border-right: 2px solid #333;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            overflow-y: auto;
+            padding: 15px;
         }
 
-        .section-label { 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            color: #444; 
-            letter-spacing: 2px; 
-            margin-bottom: 8px;
+        .header-title {
+            font-size: 18px;
             font-weight: bold;
+            color: #ff0000;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
         }
 
-        input, select, button {
-            background: #151515;
-            border: 1px solid #333;
-            color: #ccc;
-            padding: 8px 12px;
-            font-size: 12px;
+        .section { margin-bottom: 25px; }
+        .label { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 8px; display: block; }
+
+        input {
             width: 100%;
-            outline: none;
-            transition: all 0.2s;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #444;
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 14px;
         }
-        input:focus { border-color: #555; background: #1a1a1a; }
-        
-        .btn-primary { 
-            background: #222; 
-            cursor: pointer; 
-            border: none;
-            color: #aaa;
-        }
-        .btn-primary:hover { background: #333; color: #fff; }
 
-        /* LISTA DE CANAIS LIMPA */
-        .channel-list { list-style: none; }
-        .channel-item {
-            padding: 6px 0;
+        .btn {
+            width: 100%;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            margin-bottom: 5px;
+            transition: 0.2s;
+        }
+
+        .btn-watch { background: #ff0000; color: #fff; }
+        .btn-watch:hover { background: #cc0000; }
+        .btn-save { background: #333; color: #ccc; }
+        .btn-save:hover { background: #444; color: #fff; }
+
+        /* LISTA DE FAVORITOS */
+        .fav-list { border-top: 1px solid #333; padding-top: 10px; max-height: 300px; overflow-y: auto; }
+        .fav-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
-            border-bottom: 1px solid #1a1a1a;
+            padding: 8px;
+            background: #1a1a1a;
+            margin-bottom: 5px;
             cursor: pointer;
-            color: #888;
+            font-size: 13px;
         }
-        .channel-item:hover { color: #fff; }
-        .del-btn { color: #444; border: none; background: none; width: auto; cursor: pointer; }
-        .del-btn:hover { color: #ff4444; }
+        .fav-item:hover { background: #222; }
+        .fav-item .del { color: #666; font-size: 16px; padding: 0 5px; }
+        .fav-item .del:hover { color: #ff0000; }
 
-        /* VIEWPORT DAS LIVES */
-        .main-view { 
-            flex: 1; 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 1px; /* Linha fina separando as lives */
-            background: #222; /* Cor da borda entre os players */
+        /* AREA DAS LIVES */
+        .main-view {
+            flex: 1;
+            background: #000;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+            gap: 10px;
+            padding: 10px;
             overflow-y: auto;
         }
 
-        .player-container {
+        .player-box {
             background: #000;
+            border: 1px solid #222;
             display: flex;
-            height: 500px; /* Altura fixa para manter o foco */
+            aspect-ratio: 16 / 9;
             position: relative;
         }
 
-        .video-box { flex: 3; background: #000; }
-        .chat-box { flex: 1; background: #080808; border-left: 1px solid #222; }
+        .video-part { flex: 3; height: 100%; }
+        .chat-part { flex: 1; height: 100%; border-left: 1px solid #222; background: #080808; }
         
-        iframe { width: 100%; height: 100%; border: none; }
-
-        /* IA CHAT REDUZIDO */
-        #chatOutput {
-            height: 120px;
-            font-size: 11px;
-            background: #050505;
-            padding: 10px;
-            border: 1px solid #1a1a1a;
-            overflow-y: auto;
-            color: #666;
-            margin-bottom: 5px;
+        .close-live {
+            position: absolute; top: 5px; right: 5px; z-index: 10;
+            background: rgba(255,0,0,0.7); color: white; border: none; 
+            width: 25px; height: 25px; cursor: pointer; font-weight: bold;
         }
+
+        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
-<body onload="initSystem()">
+<body onload="renderFavs()">
 
-<header>
-    <div class="logo">SANTOS & VIEIRA <span style="color: #444;">// MONITOR</span></div>
-    <div id="clock">00:00:00</div>
-</header>
-
-<main>
     <div class="sidebar">
-        <div>
-            <div class="section-label">Neural Assistant</div>
-            <div id="chatOutput">System Ready...</div>
-            <input id="aiInput" placeholder="Command..." onkeydown="if(event.key==='Enter') sendToAI()">
-        </div>
+        <div class="header-title">SANTOS & VIEIRA</div>
 
-        <div>
-            <div class="section-label">Add Stream</div>
-            <input id="quickInput" placeholder="User ID" style="margin-bottom: 5px;">
+        <div class="section">
+            <span class="label">Acesso Rápido (Não Salva)</span>
+            <input id="streamID" placeholder="Nome do Canal...">
             <div style="display: flex; gap: 5px;">
-                <button class="btn-primary" onclick="addLive(document.getElementById('quickInput').value, 'twitch')">Twitch</button>
-                <button class="btn-primary" onclick="addLive(document.getElementById('quickInput').value, 'kick')">Kick</button>
+                <button class="btn btn-watch" onclick="openLive('twitch')">TWITCH</button>
+                <button class="btn btn-watch" style="background: #00e701; color: #000;" onclick="openLive('kick')">KICK</button>
             </div>
         </div>
 
-        <div>
-            <div class="section-label">Stored Channels</div>
-            <div id="channelList" class="channel-list"></div>
+        <div class="section">
+            <span class="label">Configurar Favorito</span>
+            <input id="favID" placeholder="Canal para salvar...">
+            <div style="display: flex; gap: 5px;">
+                <button class="btn btn-save" onclick="addFav('twitch')">+ Twitch</button>
+                <button class="btn btn-save" onclick="addFav('kick')">+ Kick</button>
+            </div>
         </div>
-        
-        <button class="btn-primary" style="margin-top: auto; font-size: 10px;" onclick="location.reload()">Reset Session</button>
+
+        <div class="section">
+            <span class="label">Canais Salvos</span>
+            <div id="favList" class="fav-list"></div>
+        </div>
+
+        <button class="btn btn-save" style="margin-top: auto; font-size: 10px;" onclick="location.reload()">RECARREGAR SITE</button>
     </div>
 
     <div id="mainView" class="main-view">
         </div>
-</main>
 
 <script>
-    // IA - MANTENDO A LÓGICA DO SEU OLLAMA
-    async function sendToAI() {
-        const input = document.getElementById('aiInput');
-        const output = document.getElementById('chatOutput');
-        if(!input.value) return;
-        output.innerHTML += `<div style="color:#aaa; margin-top:4px;">> ${input.value}</div>`;
-        try {
-            const response = await fetch('http://localhost:11434/api/generate', {
-                method: 'POST',
-                body: JSON.stringify({ model: 'tinyllama', prompt: input.value, stream: false })
-            });
-            const data = await response.json();
-            output.innerHTML += `<div style="color:#666; margin-top:4px;">AI: ${data.response}</div>`;
-        } catch (e) {
-            output.innerHTML += `<div style="color:#442222;">Offline</div>`;
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v5')) || [];
+
+    function openLive(type, id = null) {
+        const canal = id || document.getElementById('streamID').value.trim();
+        if(!canal) return;
+
+        const mainView = document.getElementById('mainView');
+        const host = window.location.hostname || "localhost";
+        const box = document.createElement('div');
+        box.className = 'player-box';
+
+        let vUrl, cUrl;
+
+        if(type === 'twitch') {
+            vUrl = `https://player.twitch.tv/?channel=${canal}&parent=${host}`;
+            cUrl = `https://www.twitch.tv/embed/${canal}/chat?parent=${host}&darkpopout`;
+        } else {
+            // Player e Chat da Kick (carrega mesmo offline)
+            vUrl = `https://player.kick.com/${canal}`;
+            cUrl = `https://kick.com/chat/${canal}`;
         }
-        input.value = "";
-        output.scrollTop = output.scrollHeight;
+
+        box.innerHTML = `
+            <button class="close-live" onclick="this.parentElement.remove()">X</button>
+            <div class="video-part"><iframe src="${vUrl}" allow="autoplay; fullscreen"></iframe></div>
+            <div class="chat-part"><iframe src="${cUrl}"></iframe></div>
+        `;
+
+        mainView.appendChild(box);
+        if(!id) document.getElementById('streamID').value = "";
     }
 
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v3')) || [
-        { name: "Jon Vlogs", id: "jonvlogs", type: "twitch" },
-        { name: "Loud Coringa", id: "loud_coringa", type: "twitch" }
-    ];
-
-    function initSystem() {
+    function addFav(type) {
+        const id = document.getElementById('favID').value.trim();
+        if(!id) return;
+        favorites.push({ id, type });
+        localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
         renderFavs();
-        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
+        document.getElementById('favID').value = "";
     }
 
     function renderFavs() {
-        const container = document.getElementById('channelList');
-        container.innerHTML = "";
+        const list = document.getElementById('favList');
+        list.innerHTML = "";
         favorites.forEach((fav, index) => {
-            container.innerHTML += `
-                <div class="channel-item" onclick="addLive('${fav.id}', '${fav.type}')">
-                    <span>${fav.name}</span>
-                    <button class="del-btn" onclick="event.stopPropagation(); deleteFav(${index})">×</button>
-                </div>`;
+            list.innerHTML += `
+                <div class="fav-item" onclick="openLive('${fav.type}', '${fav.id}')">
+                    <span><strong>[${fav.type.toUpperCase()}]</strong> ${fav.id}</span>
+                    <span class="del" onclick="event.stopPropagation(); removeFav(${index})">×</span>
+                </div>
+            `;
         });
     }
 
-    function deleteFav(index) {
+    function removeFav(index) {
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v3', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v5', JSON.stringify(favorites));
         renderFavs();
-    }
-
-    function addLive(val, type) {
-        if(!val) return;
-        const mainView = document.getElementById('mainView');
-        const host = window.location.hostname || "localhost";
-        const container = document.createElement('div');
-        container.className = 'player-container';
-        
-        let videoUrl, chatUrl;
-        if(type === 'twitch') {
-            videoUrl = `https://player.twitch.tv/?channel=${val}&parent=${host}`;
-            chatUrl = `https://www.twitch.tv/embed/${val}/chat?parent=${host}&darkpopout`;
-        } else {
-            videoUrl = `https://player.kick.com/${val}`;
-            chatUrl = `https://kick.com/chat/${val}`;
-        }
-
-        container.innerHTML = `
-            <button onclick="this.parentElement.remove()" style="position:absolute; right:10px; top:10px; z-index:100; width:25px; background:rgba(0,0,0,0.5); border:1px solid #333; cursor:pointer; color:#fff;">×</button>
-            <div class="video-box">
-                <iframe src="${videoUrl}" allow="autoplay; fullscreen"></iframe>
-            </div>
-            <div class="chat-box">
-                <iframe src="${chatUrl}"></iframe>
-            </div>
-        `;
-        mainView.appendChild(container);
     }
 </script>
 </body>
