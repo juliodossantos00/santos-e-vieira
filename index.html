@@ -114,10 +114,11 @@
 </div>
 
 <script>
-    // RELÓGIO E SISTEMA BASE
+    // LISTA PADRÃO COM O KROSS ADICIONADO
     let defaultFavs = [
         { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
-        { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" }
+        { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" },
+        { name: "KROSS", id: "kross", type: "kick", cat: "GAMES" }
     ];
 
     let favorites = JSON.parse(localStorage.getItem('sv_favs_v202')) || defaultFavs;
@@ -182,6 +183,7 @@
 
     function loadStream(id, type){
         const player = document.getElementById('player');
+        const chat = document.getElementById('chat');
         const pCont = document.getElementById('pContainer');
         const cCont = document.getElementById('cContainer');
         const host = window.location.hostname || "localhost";
@@ -190,15 +192,13 @@
             pCont.classList.remove('full-width');
             cCont.classList.remove('hidden');
             player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
-            document.getElementById('chat').src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
+            chat.src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
         } else if(type === 'kick') {
             pCont.classList.remove('full-width');
             cCont.classList.remove('hidden');
-            
-            // Player Kick
-            player.src = `https://player.kick.com/${id}`;
-            // Chat Kick
-            document.getElementById('chat').src = `https://kick.com/chat/${id}`;
+            // Manteve o chat/página da Kick na lateral como na versão anterior
+            player.src = `https://player.kick.com/${id}?muted=false`;
+            chat.src = `https://kick.com/${id}`; 
         }
     }
 </script>
