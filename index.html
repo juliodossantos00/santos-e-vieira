@@ -2,269 +2,237 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SANTOS & VIEIRA | NEURAL INTERFACE v5.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
+    <title>SANTOS & VIEIRA | MONITOR v5.0</title>
     <style>
-        :root { 
-            --main-color: #ff0000; 
-            --glow-color: #ff0000; 
-            --bg-panel: rgba(2, 2, 2, 0.98);
+        /* RESET E CORES FRIAS */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: #0a0a0a; 
+            color: #d1d1d1; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        *{box-sizing:border-box; margin: 0; padding: 0; cursor: crosshair;}
-        
-        body {
-            width:100%; height:100vh; background:#000; 
-            font-family:'Orbitron', sans-serif; overflow:hidden; color: #fff;
-            background-image: radial-gradient(circle at center, #150000 0%, #000 100%);
+        /* HEADER DISCRETO */
+        header {
+            padding: 10px 20px;
+            background: #000;
+            border-bottom: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .logo { font-weight: bold; letter-spacing: 1px; font-size: 14px; color: #eee; }
+        #clock { font-family: monospace; font-size: 14px; color: #666; }
 
-        .core-panel {
-            width:98%; height:96%; margin:1% auto; 
-            border:1px solid var(--main-color); position: relative;
-            box-shadow: inset 0 0 40px rgba(255, 0, 0, 0.1), 0 0 20px rgba(0,0,0,1);
-            background: var(--bg-panel); display:flex; flex-direction:column;
-            clip-path: polygon(0 0, 98% 0, 100% 2%, 100% 100%, 2% 100%, 0 98%);
-        }
+        main { display: flex; flex: 1; overflow: hidden; }
 
-        .core-header {
-            display:flex; justify-content:space-between; align-items:center; 
-            padding:12px 25px; border-bottom:1px solid var(--main-color);
-            background: linear-gradient(90deg, rgba(255,0,0,0.1) 0%, transparent 100%);
-        }
-
-        .status-blink {
-            width: 8px; height: 8px; background: var(--main-color);
-            border-radius: 50%; display: inline-block; margin-right: 10px;
-            animation: blink 1.2s infinite;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--main-color); } 50% { opacity: 0.2; } }
-
-        .core-body { flex:1; display:flex; gap:10px; padding:10px; overflow: hidden; }
-        
+        /* SIDEBAR MINIMALISTA */
         .sidebar {
-            width:280px; display:flex; flex-direction:column; gap:8px; 
-            background: rgba(5, 5, 5, 0.9); padding: 15px; 
-            border-right: 1px solid rgba(255,0,0,0.2);
+            width: 240px;
+            background: #0d0d0d;
+            border-right: 1px solid #222;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
             overflow-y: auto;
         }
 
-        .terminal-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--main-color); letter-spacing: 1px; margin-bottom: 5px; }
-
-        input, select {
-            background: rgba(0,0,0,0.8); border: 1px solid rgba(255,0,0,0.4); 
-            color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; 
-            outline: none; width: 100%;
+        .section-label { 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            color: #444; 
+            letter-spacing: 2px; 
+            margin-bottom: 8px;
+            font-weight: bold;
         }
 
-        .btn {
-            padding:10px; background: transparent; color: var(--main-color); 
-            border: 1px solid var(--main-color); cursor:pointer; font-family: 'Orbitron';
-            font-size: 9px; font-weight: bold; transition: 0.3s;
+        input, select, button {
+            background: #151515;
+            border: 1px solid #333;
+            color: #ccc;
+            padding: 8px 12px;
+            font-size: 12px;
+            width: 100%;
+            outline: none;
+            transition: all 0.2s;
         }
-        .btn:hover { background: var(--main-color); color: #000; box-shadow: 0 0 15px var(--main-color); }
-
-        .acc-item { border: 1px solid rgba(255,0,0,0.1); margin-bottom: 5px; }
-        .acc-head { padding: 10px; cursor: pointer; font-size: 10px; color: #aaa; background: rgba(255,0,0,0.03); display: flex; justify-content: space-between; }
-        .acc-body { display: none; padding: 5px; }
-        .acc-body.active { display: block; }
-
-        .main-view { flex: 1; display: grid; gap: 10px; overflow-y: auto; align-content: start; }
+        input:focus { border-color: #555; background: #1a1a1a; }
         
-        /* NOVO PLAYER BOX DIVIDIDO */
-        .player-box { 
-            border: 1px solid rgba(255,0,0,0.4); background: #000; 
-            position: relative; aspect-ratio: 16 / 8; overflow: hidden;
-            display: flex; /* Coloca vídeo e chat lado a lado */
+        .btn-primary { 
+            background: #222; 
+            cursor: pointer; 
+            border: none;
+            color: #aaa;
+        }
+        .btn-primary:hover { background: #333; color: #fff; }
+
+        /* LISTA DE CANAIS LIMPA */
+        .channel-list { list-style: none; }
+        .channel-item {
+            padding: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border-bottom: 1px solid #1a1a1a;
+            cursor: pointer;
+            color: #888;
+        }
+        .channel-item:hover { color: #fff; }
+        .del-btn { color: #444; border: none; background: none; width: auto; cursor: pointer; }
+        .del-btn:hover { color: #ff4444; }
+
+        /* VIEWPORT DAS LIVES */
+        .main-view { 
+            flex: 1; 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 1px; /* Linha fina separando as lives */
+            background: #222; /* Cor da borda entre os players */
+            overflow-y: auto;
         }
 
-        .player-header {
-            position: absolute; top: 0; left: 0; width: 100%; height: 28px;
-            background: rgba(0,0,0,0.85); border-bottom: 1px solid var(--main-color);
-            z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;
+        .player-container {
+            background: #000;
+            display: flex;
+            height: 500px; /* Altura fixa para manter o foco */
+            position: relative;
         }
 
-        .video-side { flex: 3; height: 100%; pt: 28px; } /* 75% da largura */
-        .chat-side { flex: 1; height: 100%; border-left: 1px solid #333; pt: 28px; } /* 25% da largura */
+        .video-box { flex: 3; background: #000; }
+        .chat-box { flex: 1; background: #080808; border-left: 1px solid #222; }
+        
+        iframe { width: 100%; height: 100%; border: none; }
 
-        .btn-close {
-            background: none; border: 1px solid var(--main-color); color: var(--main-color);
-            font-size: 10px; padding: 2px 6px; cursor: pointer;
-        }
-
-        iframe { width: 100%; height: 100%; border: none; background: #000; padding-top: 28px; }
-
-        #clock { font-size: 24px; color: var(--main-color); font-weight: bold; }
-
+        /* IA CHAT REDUZIDO */
         #chatOutput {
-            height: 150px; overflow-y: auto; font-size: 10px; 
-            font-family: 'JetBrains Mono'; color: #0f0; background: #000; 
-            padding: 8px; border: 1px solid #333; margin-bottom: 5px;
+            height: 120px;
+            font-size: 11px;
+            background: #050505;
+            padding: 10px;
+            border: 1px solid #1a1a1a;
+            overflow-y: auto;
+            color: #666;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body onload="initSystem()">
 
-<div class="core-panel">
-    <div class="core-header">
+<header>
+    <div class="logo">SANTOS & VIEIRA <span style="color: #444;">// MONITOR</span></div>
+    <div id="clock">00:00:00</div>
+</header>
+
+<main>
+    <div class="sidebar">
         <div>
-            <div style="font-size: 20px; font-weight: 700; letter-spacing: 3px; color: var(--main-color);">
-                <span class="status-blink"></span>SANTOS & VIEIRA
-            </div>
-            <div class="terminal-label">> NEURAL_LINK_READY</div>
+            <div class="section-label">Neural Assistant</div>
+            <div id="chatOutput">System Ready...</div>
+            <input id="aiInput" placeholder="Command..." onkeydown="if(event.key==='Enter') sendToAI()">
         </div>
+
         <div>
-            <div id="clock">00:00:00</div>
-        </div>
-    </div>
-    
-    <div class="core-body">
-        <div class="sidebar">
-            <div class="acc-item">
-                <div class="acc-head" onclick="toggleAcc('acc-ai')">S&V_AI_ASSISTANT <span>[TINY]</span></div>
-                <div id="acc-ai" class="acc-body active">
-                    <div id="chatOutput">> AGUARDANDO COMANDO...</div>
-                    <div style="display: flex; gap: 2px;">
-                        <input id="aiInput" placeholder="PERGUNTE..." onkeydown="if(event.key==='Enter') sendToAI()">
-                        <button class="btn" onclick="sendToAI()">EXE</button>
-                    </div>
-                </div>
+            <div class="section-label">Add Stream</div>
+            <input id="quickInput" placeholder="User ID" style="margin-bottom: 5px;">
+            <div style="display: flex; gap: 5px;">
+                <button class="btn-primary" onclick="addLive(document.getElementById('quickInput').value, 'twitch')">Twitch</button>
+                <button class="btn-primary" onclick="addLive(document.getElementById('quickInput').value, 'kick')">Kick</button>
             </div>
-
-            <div class="terminal-label">[ MONITOR_CONTROL ]</div>
-            <input id="quickInput" placeholder="USER_ID">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom: 10px;">
-                <button class="btn" onclick="addLive(document.getElementById('quickInput').value, 'twitch')">TWITCH.sys</button>
-                <button class="btn" onclick="addLive(document.getElementById('quickInput').value, 'kick')">KICK.sys</button>
-            </div>
-
-            <div class="acc-item">
-                <div class="acc-head" onclick="toggleAcc('acc-save')">DATABASE_CONFIG <span>[+]</span></div>
-                <div id="acc-save" class="acc-body">
-                    <input id="saveInput" placeholder="NAME">
-                    <select id="favCat">
-                        <option value="SÓ NA CONVERSA">JUST_CHATTING</option>
-                        <option value="GAMES">GAMES_SECTOR</option>
-                        <option value="ESPORTES">SPORTS_INTEL</option>
-                    </select>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:5px;">
-                        <button class="btn" onclick="saveFav('twitch')">+TW</button>
-                        <button class="btn" onclick="saveFav('kick')">+KC</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="acc-item"><div class="acc-head" onclick="toggleAcc('acc-conversa')">JUST_CHATTING <span>[V]</span></div><div id="acc-conversa" class="acc-body active"><div id="cat-CONVERSA"></div></div></div>
-            <div class="acc-item"><div class="acc-head" onclick="toggleAcc('acc-games')">GAMES_SECTOR <span>[V]</span></div><div id="acc-games" class="acc-body active"><div id="cat-GAMES"></div></div></div>
-            <div class="acc-item"><div class="acc-head" onclick="toggleAcc('acc-esportes')">SPORTS_INTEL <span>[V]</span></div><div id="acc-esportes" class="acc-body"><div id="cat-ESPORTES"></div></div></div>
-
-            <button class="btn" style="margin-top:auto; font-size:8px; opacity: 0.5;" onclick="location.reload()">REBOOT_SYSTEM</button>
         </div>
 
-        <div id="mainView" class="main-view"></div>
+        <div>
+            <div class="section-label">Stored Channels</div>
+            <div id="channelList" class="channel-list"></div>
+        </div>
+        
+        <button class="btn-primary" style="margin-top: auto; font-size: 10px;" onclick="location.reload()">Reset Session</button>
     </div>
-</div>
+
+    <div id="mainView" class="main-view">
+        </div>
+</main>
 
 <script>
-    // IA OLLAMA
+    // IA - MANTENDO A LÓGICA DO SEU OLLAMA
     async function sendToAI() {
         const input = document.getElementById('aiInput');
         const output = document.getElementById('chatOutput');
         if(!input.value) return;
-        output.innerHTML += `<div style="color:#fff;">> ${input.value}</div>`;
+        output.innerHTML += `<div style="color:#aaa; margin-top:4px;">> ${input.value}</div>`;
         try {
             const response = await fetch('http://localhost:11434/api/generate', {
                 method: 'POST',
                 body: JSON.stringify({ model: 'tinyllama', prompt: input.value, stream: false })
             });
             const data = await response.json();
-            output.innerHTML += `<div style="color:red;">S&V_IA: ${data.response}</div>`;
+            output.innerHTML += `<div style="color:#666; margin-top:4px;">AI: ${data.response}</div>`;
         } catch (e) {
-            output.innerHTML += `<div style="color:orange;">[ERRO]: IA OFFLINE</div>`;
+            output.innerHTML += `<div style="color:#442222;">Offline</div>`;
         }
         input.value = "";
         output.scrollTop = output.scrollHeight;
     }
 
-    // FAVORITOS
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v202')) || [
-        { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" }
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v3')) || [
+        { name: "Jon Vlogs", id: "jonvlogs", type: "twitch" },
+        { name: "Loud Coringa", id: "loud_coringa", type: "twitch" }
     ];
 
-    function initSystem(){
+    function initSystem() {
         renderFavs();
-        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR'), 1000);
+        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
     }
 
-    function toggleAcc(id) { document.getElementById(id).classList.toggle('active'); }
-
-    function cleanID(val) {
-        let id = val.trim();
-        if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
-        else if(id.includes("kick.com/")) id = id.split("kick.com/")[1].split("?")[0];
-        return id;
-    }
-
-    function renderFavs(){
-        ["CONVERSA", "GAMES", "ESPORTES"].forEach(c => document.getElementById(`cat-${c}`).innerHTML = "");
+    function renderFavs() {
+        const container = document.getElementById('channelList');
+        container.innerHTML = "";
         favorites.forEach((fav, index) => {
-            const list = document.getElementById(fav.cat === "SÓ NA CONVERSA" ? "cat-CONVERSA" : `cat-${fav.cat}`);
-            if(list) list.innerHTML += `<div class="fav-item" onclick="addLive('${fav.id}', '${fav.type}')"><span>> ${fav.name.toUpperCase()}</span><button onclick="event.stopPropagation(); deleteFav(${index})">[X]</button></div>`;
+            container.innerHTML += `
+                <div class="channel-item" onclick="addLive('${fav.id}', '${fav.type}')">
+                    <span>${fav.name}</span>
+                    <button class="del-btn" onclick="event.stopPropagation(); deleteFav(${index})">×</button>
+                </div>`;
         });
     }
 
-    function saveFav(type){
-        const id = cleanID(document.getElementById('saveInput').value);
-        if(!id) return;
-        favorites.push({ name: id.toUpperCase(), id, type, cat: document.getElementById('favCat').value });
-        localStorage.setItem('sv_favs_v202', JSON.stringify(favorites));
+    function deleteFav(index) {
+        favorites.splice(index, 1);
+        localStorage.setItem('sv_favs_v3', JSON.stringify(favorites));
         renderFavs();
     }
 
-    function deleteFav(index){ favorites.splice(index, 1); localStorage.setItem('sv_favs_v202', JSON.stringify(favorites)); renderFavs(); }
-
-    // FUNÇÃO ADD LIVE COM CHAT SEPARADO
     function addLive(val, type) {
-        const id = cleanID(val);
-        if(!id) return;
+        if(!val) return;
         const mainView = document.getElementById('mainView');
         const host = window.location.hostname || "localhost";
-        const slot = document.createElement('div');
-        slot.className = 'player-box';
+        const container = document.createElement('div');
+        container.className = 'player-container';
         
         let videoUrl, chatUrl;
-
         if(type === 'twitch') {
-            videoUrl = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
-            chatUrl = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
+            videoUrl = `https://player.twitch.tv/?channel=${val}&parent=${host}`;
+            chatUrl = `https://www.twitch.tv/embed/${val}/chat?parent=${host}&darkpopout`;
         } else {
-            // USANDO O PLAYER E O CHAT PURO DA KICK
-            videoUrl = `https://player.kick.com/${id}`;
-            chatUrl = `https://kick.com/chat/${id}`;
+            videoUrl = `https://player.kick.com/${val}`;
+            chatUrl = `https://kick.com/chat/${val}`;
         }
 
-        slot.innerHTML = `
-            <div class="player-header">
-                <span style="font-size:9px; color:var(--main-color);">ACTIVE_FEED: ${id.toUpperCase()}</span>
-                <button class="btn-close" onclick="this.parentElement.parentElement.remove(); checkGrid();">TERMINATE</button>
-            </div>
-            <div class="video-side">
+        container.innerHTML = `
+            <button onclick="this.parentElement.remove()" style="position:absolute; right:10px; top:10px; z-index:100; width:25px; background:rgba(0,0,0,0.5); border:1px solid #333; cursor:pointer; color:#fff;">×</button>
+            <div class="video-box">
                 <iframe src="${videoUrl}" allow="autoplay; fullscreen"></iframe>
             </div>
-            <div class="chat-side">
+            <div class="chat-box">
                 <iframe src="${chatUrl}"></iframe>
             </div>
         `;
-
-        mainView.appendChild(slot);
-        checkGrid();
-    }
-
-    function checkGrid() {
-        const mv = document.getElementById('mainView');
-        const total = mv.children.length;
-        mv.style.gridTemplateColumns = total > 1 ? "1fr" : "1fr"; // Mantém um por linha para o chat lateral ficar legível
+        mainView.appendChild(container);
     }
 </script>
 </body>
