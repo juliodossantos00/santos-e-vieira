@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SANTOS & VIEIRA | MONITOR PRO</title>
+    <title>SANTOS & VIEIRA | MONITOR V10</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        /* SIDEBAR ESQUERDA */
+        /* SIDEBAR */
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
@@ -64,84 +64,82 @@
         .btn-kick { background: var(--kick-color); color: #000; }
         .btn-save { background: #292d3e; color: #fff; }
 
-        .fav-list { max-height: 300px; overflow-y: auto; }
+        .fav-list { max-height: 250px; overflow-y: auto; }
         .fav-item {
             display: flex; justify-content: space-between; padding: 10px;
             background: #1c2030; margin-bottom: 5px; border-radius: 4px;
-            cursor: pointer; font-size: 13px; transition: var(--transition);
+            cursor: pointer; font-size: 13px;
         }
-        .fav-item:hover { background: #252a3f; padding-left: 15px; }
 
-        /* ÁREA DAS LIVES */
+        /* ÁREA DE EXIBIÇÃO CORRIGIDA */
         .main-view {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 15px;
+            padding: 10px;
             overflow-y: auto;
+            gap: 15px;
+            background: var(--bg-dark);
         }
 
-        /* CONTAINER DA LIVE (VÍDEO + CHAT) */
+        /* CONTAINER DINÂMICO */
         .live-container {
             display: flex;
             width: 100%;
-            height: 500px; /* Altura fixa para manter proporção, ou use aspect-ratio */
+            min-height: 50vh; /* Ocupa pelo menos metade da altura da tela */
+            max-height: 90vh; /* Não deixa passar da tela */
             background: #000;
-            border: 2px solid #292d3e;
-            border-radius: 8px;
-            overflow: hidden;
+            border: 1px solid #292d3e;
             position: relative;
+            flex-shrink: 0;
         }
 
         .video-wrapper {
-            flex: 1; /* Ocupa tudo que sobrar */
-            height: 100%;
-            position: relative;
+            flex: 1; /* Estica para ocupar todo o espaço cinza que você viu na foto */
+            background: #000;
         }
 
+        /* CHAT LATERAL */
         .chat-wrapper {
-            width: 25%; /* Proporção de 25% */
-            height: 100%;
-            border-left: 1px solid #292d3e;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            width: 340px; /* Largura padrão de chat */
+            border-left: 2px solid #292d3e;
+            transition: var(--transition);
             background: #090b10;
+            position: relative;
         }
 
-        /* Quando o chat estiver escondido */
+        /* ESTADO ESCONDIDO */
         .chat-wrapper.hidden {
             width: 0;
             border-left: none;
+            overflow: hidden;
         }
 
-        /* BOTÃO DE ESCONDER CHAT (A SETINHA) */
+        /* SETINHA DE ESCONDER (CORRIGIDA) */
         .toggle-chat-arrow {
             position: absolute;
-            left: -25px;
+            left: -20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 25px;
-            height: 50px;
+            width: 20px;
+            height: 60px;
             background: #292d3e;
-            color: white;
+            color: #fff;
             border: none;
             cursor: pointer;
-            border-radius: 8px 0 0 8px;
-            z-index: 10;
+            z-index: 100;
+            border-radius: 5px 0 0 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: var(--transition);
+            font-size: 12px;
         }
-        .toggle-chat-arrow:hover { background: var(--twitch-color); }
 
         .close-live-btn {
-            position: absolute; top: 10px; left: 10px; z-index: 20;
-            background: rgba(255, 68, 68, 0.2); color: #ff4444; border: 1px solid #ff4444;
-            width: 25px; height: 25px; cursor: pointer; border-radius: 50%; font-weight: bold;
+            position: absolute; top: 10px; left: 10px; z-index: 110;
+            background: rgba(255,0,0,0.5); color: white; border: none;
+            width: 24px; height: 24px; cursor: pointer; border-radius: 4px;
         }
-        .close-live-btn:hover { background: #ff4444; color: white; }
 
         iframe { width: 100%; height: 100%; border: none; }
     </style>
@@ -153,8 +151,8 @@
         <div class="header-title">SANTOS & VIEIRA</div>
 
         <div class="section">
-            <span class="label">Monitorar Agora</span>
-            <input id="streamID" placeholder="ID do Canal...">
+            <span class="label">Monitorar</span>
+            <input id="streamID" placeholder="Canal...">
             <div style="display: flex; gap: 5px;">
                 <button class="btn btn-twitch" onclick="openLive('twitch')">Twitch</button>
                 <button class="btn btn-kick" onclick="openLive('kick')">Kick</button>
@@ -162,12 +160,12 @@
         </div>
 
         <div class="section">
-            <span class="label">Canais Salvos</span>
+            <span class="label">Favoritos</span>
             <div id="favList" class="fav-list"></div>
-            <input id="favID" style="margin-top: 10px;" placeholder="Novo Favorito...">
+            <input id="favID" style="margin-top: 10px;" placeholder="Nome...">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                <button class="btn btn-save" onclick="addFav('twitch')">+ Twitch</button>
-                <button class="btn btn-save" onclick="addFav('kick')">+ Kick</button>
+                <button class="btn btn-save" onclick="addFav('twitch')">+ TW</button>
+                <button class="btn btn-save" onclick="addFav('kick')">+ KC</button>
             </div>
         </div>
     </div>
@@ -175,7 +173,7 @@
     <div id="mainView" class="main-view"></div>
 
 <script>
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v9')) || [];
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v10')) || [];
 
     function toggleSidebar() {
         const sb = document.getElementById('sidebar');
@@ -183,7 +181,6 @@
         document.getElementById('tBtn').innerText = sb.classList.contains('collapsed') ? "▶" : "◀";
     }
 
-    // Função para esconder/mostrar o chat na lateral
     function toggleChat(btn) {
         const wrapper = btn.parentElement;
         wrapper.classList.toggle('hidden');
@@ -205,10 +202,9 @@
             cUrl = `https://www.twitch.tv/embed/${canal}/chat?parent=${host}&darkpopout`;
         } else {
             vUrl = `https://player.kick.com/${canal}`;
-            cUrl = ""; // Kick sem chat por enquanto
+            cUrl = "";
         }
 
-        // Se for Kick, nem cria o wrapper do chat para o vídeo ser 100% direto
         const chatHTML = type === 'twitch' ? `
             <div class="chat-wrapper">
                 <button class="toggle-chat-arrow" onclick="toggleChat(this)">▶</button>
@@ -232,7 +228,7 @@
         const id = document.getElementById('favID').value.trim();
         if(!id) return;
         favorites.push({ id, type });
-        localStorage.setItem('sv_favs_v9', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v10', JSON.stringify(favorites));
         renderFavs();
         document.getElementById('favID').value = "";
     }
@@ -253,7 +249,7 @@
 
     function removeFav(index) {
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v9', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v10', JSON.stringify(favorites));
         renderFavs();
     }
 </script>
