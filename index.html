@@ -12,118 +12,103 @@
             --twitch-color: #9146FF;
             --kick-color: #53FC18;
             --text-main: #e1e1e6;
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.2s ease;
         }
 
         body { 
             background: var(--bg-dark); 
             color: var(--text-main); 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
 
-        /* SIDEBAR RETRÁTIL */
+        /* SIDEBAR */
         .sidebar {
-            width: 300px;
+            width: 260px;
             background: var(--sidebar-bg);
             border-right: 1px solid #292d3e;
             display: flex;
             flex-direction: column;
             padding: 15px;
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: margin-left 0.3s ease;
             position: relative;
-            z-index: 100;
         }
+        .sidebar.collapsed { margin-left: -260px; }
 
-        .sidebar.collapsed { margin-left: -300px; }
-
-        .toggle-btn {
+        .toggle-sidebar {
             position: absolute; right: -30px; top: 15px; width: 30px; height: 40px;
             background: var(--sidebar-bg); border: 1px solid #292d3e; border-left: none;
-            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            border-radius: 0 5px 5px 0; transition: var(--transition);
-        }
-        .toggle-btn:hover { background: #1c2030; color: var(--kick-color); }
-
-        .header-area {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #292d3e;
+            color: white; cursor: pointer; border-radius: 0 5px 5px 0;
         }
 
-        .header-title { font-size: 14px; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .header-title { font-size: 14px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #292d3e; padding-bottom: 10px; text-align: center; }
 
-        .section { margin-bottom: 20px; }
-        .label { font-size: 10px; color: #717cb4; text-transform: uppercase; margin-bottom: 10px; display: block; font-weight: bold; }
+        .label { font-size: 10px; color: #717cb4; text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: bold; }
 
         input {
-            width: 100%; padding: 12px; background: #090b10; border: 1px solid #292d3e;
-            color: #fff; margin-bottom: 10px; border-radius: 4px; transition: var(--transition);
+            width: 100%; padding: 10px; background: #090b10; border: 1px solid #292d3e;
+            color: #fff; margin-bottom: 10px; border-radius: 4px;
         }
-        input:focus { border-color: var(--twitch-color); outline: none; background: #0c0e14; }
 
         .btn {
-            width: 100%; padding: 12px; cursor: pointer; font-weight: bold; border: none;
-            border-radius: 4px; margin-bottom: 8px; font-size: 12px; text-transform: uppercase;
-            transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 10px; cursor: pointer; font-weight: bold; border: none;
+            border-radius: 4px; margin-bottom: 5px; font-size: 11px; text-transform: uppercase;
+            transition: var(--transition);
         }
-
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.2); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .btn:active { transform: translateY(0px) scale(0.97); }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
         .btn-twitch { background: var(--twitch-color); color: white; }
         .btn-kick { background: var(--kick-color); color: #000; }
         .btn-save { background: #292d3e; color: #fff; }
+
+        .fav-list { max-height: 300px; overflow-y: auto; }
+        .fav-item {
+            display: flex; justify-content: space-between; padding: 8px;
+            background: #1c2030; margin-bottom: 5px; border-radius: 4px;
+            cursor: pointer; font-size: 12px;
+        }
+
+        /* GRID DE QUADRADOS SEPARADOS */
+        .main-view {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 15px;
+            padding: 15px;
+            overflow-y: auto;
+            align-content: start;
+        }
+
+        .module-box {
+            background: #000;
+            border: 2px solid #292d3e;
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            aspect-ratio: 16 / 9;
+            transition: height 0.3s ease;
+        }
+
+        .module-header {
+            background: #1c2030;
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .module-content { flex: 1; width: 100%; height: 100%; }
+        .module-content.hidden { display: none; }
         
-        .btn-login-google { 
-            background: #111; color: var(--kick-color); border: 1px solid var(--kick-color); 
-            font-size: 10px; margin-top: 5px; animation: pulse-border 2s infinite;
-        }
+        .module-box.minimized { aspect-ratio: auto; height: 35px; }
 
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(83, 252, 24, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(83, 252, 24, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(83, 252, 24, 0); }
-        }
-
-        .fav-list, .chat-selector-list { max-height: 200px; overflow-y: auto; }
-        .fav-item, .chat-sel-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; background: #1c2030; margin-bottom: 6px; border-radius: 4px;
-            cursor: pointer; font-size: 13px; transition: var(--transition); border: 1px solid transparent;
-        }
-        .fav-item:hover, .chat-sel-item:hover { background: #252a3f; transform: translateX(5px); border-color: #353a50; }
-
-        /* AREA DOS PLAYERS */
-        .main-view { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 15px; overflow-y: auto; scroll-behavior: smooth; }
-
-        .player-box {
-            background: #000; border-radius: 8px; overflow: hidden; display: flex;
-            min-height: 450px; border: 2px solid #292d3e; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .video-part { flex: 1; transition: flex 0.3s ease; }
-        .chat-part { width: 350px; border-left: 1px solid #292d3e; position: relative; transition: width 0.3s ease; }
-        
-        /* Classe para esconder o chat */
-        .chat-part.minimized { width: 0; border: none; overflow: hidden; }
-
-        /* BOTÃO DE MINIMIZAR CHAT DENTRO DA BOX */
-        .mini-chat-btn {
-            position: absolute; left: -25px; top: 50%; transform: translateY(-50%);
-            width: 25px; height: 50px; background: #292d3e; color: white; border: none;
-            cursor: pointer; border-radius: 8px 0 0 8px; z-index: 5; font-size: 10px;
-        }
-
-        .close-live {
-            position: absolute; top: 10px; left: 10px; z-index: 10;
-            background: rgba(0,0,0,0.8); color: #ff4444; border: 1px solid #ff4444; 
-            width: 30px; height: 30px; cursor: pointer; border-radius: 50%;
-            transition: var(--transition); display: flex; align-items: center; justify-content: center;
-        }
-        .close-live:hover { background: #ff4444; color: white; transform: rotate(90deg); }
+        .close-btn { color: #ff4444; cursor: pointer; margin-left: 10px; font-size: 14px; }
+        .toggle-mod-btn { color: #53FC18; cursor: pointer; font-size: 14px; }
 
         iframe { width: 100%; height: 100%; border: none; }
     </style>
@@ -131,47 +116,31 @@
 <body onload="renderFavs()">
 
     <div class="sidebar" id="sidebar">
-        <button class="toggle-btn" onclick="toggleSidebar()" id="tBtn">◀</button>
-        
-        <div class="header-area">
-            <div class="header-title">SANTOS & VIEIRA</div>
+        <button class="toggle-sidebar" onclick="toggleSidebar()" id="tBtn">◀</button>
+        <div class="header-title">SANTOS & VIEIRA</div>
+
+        <div class="section" style="margin-bottom: 20px;">
+            <span class="label">Abrir Monitor</span>
+            <input id="streamID" placeholder="Nome do Canal...">
+            <button class="btn btn-twitch" onclick="openLive('twitch')">Twitch (Vídeo + Chat)</button>
+            <button class="btn btn-kick" onclick="openLive('kick')">Kick (Só Vídeo)</button>
         </div>
 
         <div class="section">
-            <span class="label">Monitorar Agora</span>
-            <input id="streamID" placeholder="ID do Canal...">
-            <div style="display: flex; gap: 8px;">
-                <button class="btn btn-twitch" onclick="openLive('twitch')">Twitch</button>
-                <button class="btn btn-kick" onclick="openLive('kick')">Kick</button>
+            <span class="label">Favoritos</span>
+            <input id="favID" placeholder="Salvar ID...">
+            <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                <button class="btn btn-save" onclick="addFav('twitch')">Twitch</button>
+                <button class="btn btn-save" onclick="addFav('kick')">Kick</button>
             </div>
-            <button class="btn btn-login-google" onclick="window.open('https://kick.com/login', 'kLogin', 'width=500,height=650')">
-                🔓 LIBERAR LOGIN GOOGLE
-            </button>
-        </div>
-
-        <div class="section">
-            <span class="label">Controle de Chats</span>
-            <div id="chatSelector" class="chat-selector-list">
-                <p style="font-size: 11px; color: #444; text-align: center;">Nenhuma live ativa</p>
-            </div>
-        </div>
-
-        <div class="section">
-            <span class="label">Canais Registrados</span>
             <div id="favList" class="fav-list"></div>
-            <input id="favID" style="margin-top: 10px;" placeholder="ID para salvar...">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button class="btn btn-save" onclick="addFav('twitch')">+ Twitch</button>
-                <button class="btn btn-save" onclick="addFav('kick')">+ Kick</button>
-            </div>
         </div>
     </div>
 
     <div id="mainView" class="main-view"></div>
 
 <script>
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v6')) || [];
-    let activeLives = [];
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v8')) || [];
 
     function toggleSidebar() {
         const sb = document.getElementById('sidebar');
@@ -179,80 +148,56 @@
         document.getElementById('tBtn').innerText = sb.classList.contains('collapsed') ? "▶" : "◀";
     }
 
-    // Função para minimizar o chat de uma live específica
-    function toggleChat(boxId) {
-        const chatPart = document.querySelector(`#${boxId} .chat-part`);
-        const btn = document.querySelector(`#${boxId} .mini-chat-btn`);
-        chatPart.classList.toggle('minimized');
-        btn.innerText = chatPart.classList.contains('minimized') ? "◀" : "▶";
+    function createModule(title, url, isChat = false) {
+        const mainView = document.getElementById('mainView');
+        const box = document.createElement('div');
+        box.className = 'module-box';
+        
+        box.innerHTML = `
+            <div class="module-header">
+                <span>${title}</span>
+                <div>
+                    <span class="toggle-mod-btn" onclick="toggleModule(this)">[ - / + ]</span>
+                    <span class="close-btn" onclick="this.closest('.module-box').remove()">×</span>
+                </div>
+            </div>
+            <div class="module-content">
+                <iframe src="${url}" allow="fullscreen"></iframe>
+            </div>
+        `;
+        mainView.appendChild(box);
+    }
+
+    function toggleModule(btn) {
+        const box = btn.closest('.module-box');
+        const content = box.querySelector('.module-content');
+        box.classList.toggle('minimized');
+        content.classList.toggle('hidden');
     }
 
     function openLive(type, id = null) {
         const canal = id || document.getElementById('streamID').value.trim();
         if(!canal) return;
-
-        const mainView = document.getElementById('mainView');
         const host = window.location.hostname || "localhost";
-        const boxId = "box_" + Date.now();
-        const box = document.createElement('div');
-        box.className = 'player-box';
-        box.id = boxId;
 
-        let vUrl, cUrl;
         if(type === 'twitch') {
-            vUrl = `https://player.twitch.tv/?channel=${canal}&parent=${host}`;
-            cUrl = `https://www.twitch.tv/embed/${canal}/chat?parent=${host}&darkpopout`;
+            // Cria Vídeo
+            createModule(`TWITCH: ${canal}`, `https://player.twitch.tv/?channel=${canal}&parent=${host}`);
+            // Cria Chat Separado
+            createModule(`CHAT: ${canal}`, `https://www.twitch.tv/embed/${canal}/chat?parent=${host}&darkpopout`, true);
         } else {
-            vUrl = `https://player.kick.com/${canal}`;
-            cUrl = `https://kick.com/chat/${canal}`;
+            // Kick - Só o vídeo (sem chat problemático)
+            createModule(`KICK: ${canal}`, `https://player.kick.com/${canal}`);
         }
 
-        box.innerHTML = `
-            <button class="close-live" onclick="closeLive('${boxId}')">×</button>
-            <div class="video-part"><iframe src="${vUrl}" allow="fullscreen"></iframe></div>
-            <div class="chat-part">
-                <button class="mini-chat-btn" onclick="toggleChat('${boxId}')">▶</button>
-                <iframe src="${cUrl}"></iframe>
-            </div>
-        `;
-
-        mainView.appendChild(box);
-        activeLives.push({ boxId, canal, type });
-        renderChatSelector();
-        
         if(!id) document.getElementById('streamID').value = "";
-    }
-
-    function closeLive(boxId) {
-        document.getElementById(boxId).remove();
-        activeLives = activeLives.filter(l => l.boxId !== boxId);
-        renderChatSelector();
-    }
-
-    // Atualiza a lista de abas na sidebar
-    function renderChatSelector() {
-        const selector = document.getElementById('chatSelector');
-        if (activeLives.length === 0) {
-            selector.innerHTML = '<p style="font-size: 11px; color: #444; text-align: center;">Nenhuma live ativa</p>';
-            return;
-        }
-        selector.innerHTML = "";
-        activeLives.forEach(live => {
-            const color = live.type === 'twitch' ? 'var(--twitch-color)' : 'var(--kick-color)';
-            selector.innerHTML += `
-                <div class="chat-sel-item" onclick="document.getElementById('${live.boxId}').scrollIntoView()">
-                    <span><b style="color:${color}">●</b> ${live.canal.toUpperCase()}</span>
-                    <span style="font-size: 10px; opacity: 0.5;">CHAT</span>
-                </div>
-            `;
-        });
     }
 
     function addFav(type) {
         const id = document.getElementById('favID').value.trim();
         if(!id) return;
         favorites.push({ id, type });
-        localStorage.setItem('sv_favs_v6', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v8', JSON.stringify(favorites));
         renderFavs();
         document.getElementById('favID').value = "";
     }
@@ -261,11 +206,11 @@
         const list = document.getElementById('favList');
         list.innerHTML = "";
         favorites.forEach((fav, index) => {
-            const dotColor = fav.type === 'twitch' ? 'var(--twitch-color)' : 'var(--kick-color)';
+            const color = fav.type === 'twitch' ? 'var(--twitch-color)' : 'var(--kick-color)';
             list.innerHTML += `
                 <div class="fav-item" onclick="openLive('${fav.type}', '${fav.id}')">
-                    <span><span style="color:${dotColor}">●</span> ${fav.id}</span>
-                    <span style="color:#555" onclick="event.stopPropagation(); removeFav(${index})">×</span>
+                    <span><b style="color:${color}">●</b> ${fav.id}</span>
+                    <span onclick="event.stopPropagation(); removeFav(${index})">×</span>
                 </div>
             `;
         });
@@ -273,7 +218,7 @@
 
     function removeFav(index) {
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v6', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v8', JSON.stringify(favorites));
         renderFavs();
     }
 </script>
