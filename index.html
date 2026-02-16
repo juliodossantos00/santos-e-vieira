@@ -20,13 +20,6 @@
             background-image: radial-gradient(circle at center, #150000 0%, #000 100%);
         }
 
-        /* Efeito de Scanner e Grid */
-        body::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(255, 0, 0, 0.15); animation: scan 6s linear infinite; z-index: 100; pointer-events: none;
-        }
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
-
         .core-panel {
             width:98%; height:96%; margin:1% auto; 
             border:1px solid var(--main-color); position: relative;
@@ -50,11 +43,11 @@
 
         .core-body { flex:1; display:flex; gap:10px; padding:10px; overflow: hidden; }
         
-        /* Sidebar Hacker */
         .sidebar {
             width:280px; display:flex; flex-direction:column; gap:8px; 
             background: rgba(5, 5, 5, 0.9); padding: 15px; 
             border-right: 1px solid rgba(255,0,0,0.2);
+            overflow-y: auto;
         }
 
         .terminal-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--main-color); letter-spacing: 1px; margin-bottom: 5px; }
@@ -64,7 +57,6 @@
             color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; 
             outline: none; width: 100%;
         }
-        input:focus { border-color: var(--main-color); box-shadow: 0 0 10px rgba(255,0,0,0.3); }
 
         .btn {
             padding:10px; background: transparent; color: var(--main-color); 
@@ -73,46 +65,43 @@
         }
         .btn:hover { background: var(--main-color); color: #000; box-shadow: 0 0 15px var(--main-color); }
 
-        /* Acordeon */
         .acc-item { border: 1px solid rgba(255,0,0,0.1); margin-bottom: 5px; }
         .acc-head { padding: 10px; cursor: pointer; font-size: 10px; color: #aaa; background: rgba(255,0,0,0.03); display: flex; justify-content: space-between; }
-        .acc-head:hover { color: var(--main-color); background: rgba(255,0,0,0.08); }
         .acc-body { display: none; padding: 5px; }
         .acc-body.active { display: block; }
 
-        .fav-item {
-            display:flex; align-items:center; justify-content:space-between; 
-            padding:8px; background: rgba(255,0,0,0.02); margin-bottom: 2px;
-            font-size: 9px; border: 1px solid transparent;
-        }
-        .fav-item:hover { border-color: var(--main-color); transform: translateX(5px); }
-
-        /* Grid de Vídeo */
         .main-view { flex: 1; display: grid; gap: 10px; overflow-y: auto; align-content: start; }
         
+        /* NOVO PLAYER BOX DIVIDIDO */
         .player-box { 
             border: 1px solid rgba(255,0,0,0.4); background: #000; 
-            position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+            position: relative; aspect-ratio: 16 / 8; overflow: hidden;
+            display: flex; /* Coloca vídeo e chat lado a lado */
         }
 
         .player-header {
-            position: absolute; top: 0; width: 100%; height: 28px;
+            position: absolute; top: 0; left: 0; width: 100%; height: 28px;
             background: rgba(0,0,0,0.85); border-bottom: 1px solid var(--main-color);
             z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;
         }
+
+        .video-side { flex: 3; height: 100%; pt: 28px; } /* 75% da largura */
+        .chat-side { flex: 1; height: 100%; border-left: 1px solid #333; pt: 28px; } /* 25% da largura */
 
         .btn-close {
             background: none; border: 1px solid var(--main-color); color: var(--main-color);
             font-size: 10px; padding: 2px 6px; cursor: pointer;
         }
 
-        /* Ajuste do Iframe para mostrar o Chat da Kick */
-        iframe { 
-            width: 100%; height: 100%; border: none; 
-            background: #000;
-        }
+        iframe { width: 100%; height: 100%; border: none; background: #000; padding-top: 28px; }
 
         #clock { font-size: 24px; color: var(--main-color); font-weight: bold; }
+
+        #chatOutput {
+            height: 150px; overflow-y: auto; font-size: 10px; 
+            font-family: 'JetBrains Mono'; color: #0f0; background: #000; 
+            padding: 8px; border: 1px solid #333; margin-bottom: 5px;
+        }
     </style>
 </head>
 <body onload="initSystem()">
@@ -123,7 +112,7 @@
             <div style="font-size: 20px; font-weight: 700; letter-spacing: 3px; color: var(--main-color);">
                 <span class="status-blink"></span>SANTOS & VIEIRA
             </div>
-            <div class="terminal-label">> EXTERNAL_COMM_LINK_ESTABLISHED</div>
+            <div class="terminal-label">> NEURAL_LINK_READY</div>
         </div>
         <div>
             <div id="clock">00:00:00</div>
@@ -132,8 +121,19 @@
     
     <div class="core-body">
         <div class="sidebar">
-            <div class="terminal-label">[ MANUAL_OVERRIDE ]</div>
-            <input id="quickInput" placeholder="CHANNEL_ID">
+            <div class="acc-item">
+                <div class="acc-head" onclick="toggleAcc('acc-ai')">S&V_AI_ASSISTANT <span>[TINY]</span></div>
+                <div id="acc-ai" class="acc-body active">
+                    <div id="chatOutput">> AGUARDANDO COMANDO...</div>
+                    <div style="display: flex; gap: 2px;">
+                        <input id="aiInput" placeholder="PERGUNTE..." onkeydown="if(event.key==='Enter') sendToAI()">
+                        <button class="btn" onclick="sendToAI()">EXE</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="terminal-label">[ MONITOR_CONTROL ]</div>
+            <input id="quickInput" placeholder="USER_ID">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom: 10px;">
                 <button class="btn" onclick="addLive(document.getElementById('quickInput').value, 'twitch')">TWITCH.sys</button>
                 <button class="btn" onclick="addLive(document.getElementById('quickInput').value, 'kick')">KICK.sys</button>
@@ -154,11 +154,11 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="acc-item"><div class="acc-head" onclick="toggleAcc('acc-conversa')">JUST_CHATTING <span>[V]</span></div><div id="acc-conversa" class="acc-body active"><div id="cat-CONVERSA"></div></div></div>
             <div class="acc-item"><div class="acc-head" onclick="toggleAcc('acc-games')">GAMES_SECTOR <span>[V]</span></div><div id="acc-games" class="acc-body active"><div id="cat-GAMES"></div></div></div>
             <div class="acc-item"><div class="acc-head" onclick="toggleAcc('acc-esportes')">SPORTS_INTEL <span>[V]</span></div><div id="acc-esportes" class="acc-body"><div id="cat-ESPORTES"></div></div></div>
-            
+
             <button class="btn" style="margin-top:auto; font-size:8px; opacity: 0.5;" onclick="location.reload()">REBOOT_SYSTEM</button>
         </div>
 
@@ -167,10 +167,29 @@
 </div>
 
 <script>
+    // IA OLLAMA
+    async function sendToAI() {
+        const input = document.getElementById('aiInput');
+        const output = document.getElementById('chatOutput');
+        if(!input.value) return;
+        output.innerHTML += `<div style="color:#fff;">> ${input.value}</div>`;
+        try {
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                body: JSON.stringify({ model: 'tinyllama', prompt: input.value, stream: false })
+            });
+            const data = await response.json();
+            output.innerHTML += `<div style="color:red;">S&V_IA: ${data.response}</div>`;
+        } catch (e) {
+            output.innerHTML += `<div style="color:orange;">[ERRO]: IA OFFLINE</div>`;
+        }
+        input.value = "";
+        output.scrollTop = output.scrollHeight;
+    }
+
+    // FAVORITOS
     let favorites = JSON.parse(localStorage.getItem('sv_favs_v202')) || [
-        { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
-        { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" },
-        { name: "KROSS", id: "kross", type: "kick", cat: "GAMES" }
+        { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" }
     ];
 
     function initSystem(){
@@ -181,7 +200,6 @@
     function toggleAcc(id) { document.getElementById(id).classList.toggle('active'); }
 
     function cleanID(val) {
-        if(!val) return "";
         let id = val.trim();
         if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
         else if(id.includes("kick.com/")) id = id.split("kick.com/")[1].split("?")[0];
@@ -192,28 +210,21 @@
         ["CONVERSA", "GAMES", "ESPORTES"].forEach(c => document.getElementById(`cat-${c}`).innerHTML = "");
         favorites.forEach((fav, index) => {
             const list = document.getElementById(fav.cat === "SÓ NA CONVERSA" ? "cat-CONVERSA" : `cat-${fav.cat}`);
-            if(list) {
-                list.innerHTML += `
-                <div class="fav-item" onclick="addLive('${fav.id}', '${fav.type}')">
-                    <span>> ${fav.name.toUpperCase()} <small>[${fav.type}]</small></span>
-                    <button style="background:none; border:none; color:red; cursor:pointer;" onclick="event.stopPropagation(); deleteFav(${index})">[X]</button>
-                </div>`;
-            }
+            if(list) list.innerHTML += `<div class="fav-item" onclick="addLive('${fav.id}', '${fav.type}')"><span>> ${fav.name.toUpperCase()}</span><button onclick="event.stopPropagation(); deleteFav(${index})">[X]</button></div>`;
         });
     }
 
     function saveFav(type){
-        const input = document.getElementById('saveInput');
-        const id = cleanID(input.value);
+        const id = cleanID(document.getElementById('saveInput').value);
         if(!id) return;
         favorites.push({ name: id.toUpperCase(), id, type, cat: document.getElementById('favCat').value });
         localStorage.setItem('sv_favs_v202', JSON.stringify(favorites));
         renderFavs();
-        input.value = "";
     }
 
     function deleteFav(index){ favorites.splice(index, 1); localStorage.setItem('sv_favs_v202', JSON.stringify(favorites)); renderFavs(); }
 
+    // FUNÇÃO ADD LIVE COM CHAT SEPARADO
     function addLive(val, type) {
         const id = cleanID(val);
         if(!id) return;
@@ -222,27 +233,38 @@
         const slot = document.createElement('div');
         slot.className = 'player-box';
         
-        let url = (type === 'twitch') 
-            ? `https://player.twitch.tv/?channel=${id}&parent=${host}` 
-            : `https://kick.com/${id}`; // Link direto para carregar o site com chat
+        let videoUrl, chatUrl;
+
+        if(type === 'twitch') {
+            videoUrl = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
+            chatUrl = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
+        } else {
+            // USANDO O PLAYER E O CHAT PURO DA KICK
+            videoUrl = `https://player.kick.com/${id}`;
+            chatUrl = `https://kick.com/chat/${id}`;
+        }
 
         slot.innerHTML = `
             <div class="player-header">
                 <span style="font-size:9px; color:var(--main-color);">ACTIVE_FEED: ${id.toUpperCase()}</span>
                 <button class="btn-close" onclick="this.parentElement.parentElement.remove(); checkGrid();">TERMINATE</button>
             </div>
-            <iframe src="${url}" allow="autoplay; fullscreen"></iframe>
+            <div class="video-side">
+                <iframe src="${videoUrl}" allow="autoplay; fullscreen"></iframe>
+            </div>
+            <div class="chat-side">
+                <iframe src="${chatUrl}"></iframe>
+            </div>
         `;
 
         mainView.appendChild(slot);
         checkGrid();
-        document.getElementById('quickInput').value = "";
     }
 
     function checkGrid() {
         const mv = document.getElementById('mainView');
         const total = mv.children.length;
-        mv.style.gridTemplateColumns = total > 4 ? "repeat(auto-fit, minmax(30%, 1fr))" : (total > 1 ? "repeat(auto-fit, minmax(45%, 1fr))" : "1fr");
+        mv.style.gridTemplateColumns = total > 1 ? "1fr" : "1fr"; // Mantém um por linha para o chat lateral ficar legível
     }
 </script>
 </body>
