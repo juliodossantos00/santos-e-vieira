@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SANTOS & VIEIRA | MONITOR V10</title>
+    <title>SANTOS & VIEIRA | MONITOR V11</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -71,77 +71,78 @@
             cursor: pointer; font-size: 13px;
         }
 
-        /* ÁREA DE EXIBIÇÃO CORRIGIDA */
+        /* ÁREA DE EXIBIÇÃO - AGORA OCUPA TUDO */
         .main-view {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 10px;
+            padding: 0; /* Tirei o padding para ganhar cada pixel */
             overflow-y: auto;
-            gap: 15px;
             background: var(--bg-dark);
         }
 
-        /* CONTAINER DINÂMICO */
+        /* CONTAINER QUE CRESCE PARA BAIXO */
         .live-container {
             display: flex;
             width: 100%;
-            min-height: 50vh; /* Ocupa pelo menos metade da altura da tela */
-            max-height: 90vh; /* Não deixa passar da tela */
+            /* Se houver apenas uma live, ela tenta ocupar quase a tela toda */
+            min-height: 80vh; 
             background: #000;
-            border: 1px solid #292d3e;
+            border-bottom: 2px solid #292d3e;
             position: relative;
             flex-shrink: 0;
         }
 
         .video-wrapper {
-            flex: 1; /* Estica para ocupar todo o espaço cinza que você viu na foto */
+            flex: 1;
+            height: 100%;
             background: #000;
         }
 
         /* CHAT LATERAL */
         .chat-wrapper {
-            width: 340px; /* Largura padrão de chat */
+            width: 350px;
+            height: 100%;
             border-left: 2px solid #292d3e;
             transition: var(--transition);
             background: #090b10;
             position: relative;
         }
 
-        /* ESTADO ESCONDIDO */
         .chat-wrapper.hidden {
             width: 0;
             border-left: none;
             overflow: hidden;
         }
 
-        /* SETINHA DE ESCONDER (CORRIGIDA) */
+        /* SETINHA */
         .toggle-chat-arrow {
             position: absolute;
             left: -20px;
             top: 50%;
             transform: translateY(-50%);
             width: 20px;
-            height: 60px;
+            height: 80px;
             background: #292d3e;
             color: #fff;
             border: none;
             cursor: pointer;
             z-index: 100;
-            border-radius: 5px 0 0 5px;
+            border-radius: 8px 0 0 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .close-live-btn {
-            position: absolute; top: 10px; left: 10px; z-index: 110;
-            background: rgba(255,0,0,0.5); color: white; border: none;
-            width: 24px; height: 24px; cursor: pointer; border-radius: 4px;
+            position: absolute; top: 15px; left: 15px; z-index: 110;
+            background: rgba(255,0,0,0.7); color: white; border: none;
+            width: 28px; height: 28px; cursor: pointer; border-radius: 50%;
+            font-weight: bold;
         }
 
-        iframe { width: 100%; height: 100%; border: none; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
     </style>
 </head>
 <body onload="renderFavs()">
@@ -152,7 +153,7 @@
 
         <div class="section">
             <span class="label">Monitorar</span>
-            <input id="streamID" placeholder="Canal...">
+            <input id="streamID" placeholder="Nome do Canal...">
             <div style="display: flex; gap: 5px;">
                 <button class="btn btn-twitch" onclick="openLive('twitch')">Twitch</button>
                 <button class="btn btn-kick" onclick="openLive('kick')">Kick</button>
@@ -160,12 +161,12 @@
         </div>
 
         <div class="section">
-            <span class="label">Favoritos</span>
+            <span class="label">Meus Canais</span>
             <div id="favList" class="fav-list"></div>
-            <input id="favID" style="margin-top: 10px;" placeholder="Nome...">
+            <input id="favID" style="margin-top: 10px;" placeholder="Salvar ID...">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                <button class="btn btn-save" onclick="addFav('twitch')">+ TW</button>
-                <button class="btn btn-save" onclick="addFav('kick')">+ KC</button>
+                <button class="btn btn-save" onclick="addFav('twitch')">+ TWITCH</button>
+                <button class="btn btn-save" onclick="addFav('kick')">+ KICK</button>
             </div>
         </div>
     </div>
@@ -173,7 +174,7 @@
     <div id="mainView" class="main-view"></div>
 
 <script>
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v10')) || [];
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v11')) || [];
 
     function toggleSidebar() {
         const sb = document.getElementById('sidebar');
@@ -195,6 +196,14 @@
         const host = window.location.hostname || "localhost";
         const container = document.createElement('div');
         container.className = 'live-container';
+
+        // Ajuste de altura automática: se for a única live, ocupa 95% da altura disponível
+        const liveCount = document.querySelectorAll('.live-container').length;
+        if(liveCount === 0) {
+            container.style.height = "calc(100vh)";
+        } else {
+            container.style.height = "50vh";
+        }
 
         let vUrl, cUrl;
         if(type === 'twitch') {
@@ -228,7 +237,7 @@
         const id = document.getElementById('favID').value.trim();
         if(!id) return;
         favorites.push({ id, type });
-        localStorage.setItem('sv_favs_v10', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v11', JSON.stringify(favorites));
         renderFavs();
         document.getElementById('favID').value = "";
     }
@@ -249,7 +258,7 @@
 
     function removeFav(index) {
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v10', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v11', JSON.stringify(favorites));
         renderFavs();
     }
 </script>
