@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SANTOS & VIEIRA | SYSTEM CORE</title>
+    <title>SANTOS & VIEIRA | CORE COMMAND</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --main-color: #ff0000; --glow-color: rgba(255, 0, 0, 0.7); --bg-panel: rgba(5, 0, 0, 0.98); }
@@ -17,46 +17,59 @@
         .core-header{display:flex; justify-content:space-between; align-items:center; padding:15px 25px; border-bottom:2px solid var(--main-color); background:rgba(255,0,0,0.05);}
         
         .core-body{flex:1; display:flex; gap:15px; padding:15px; overflow: hidden;}
-        .sidebar{width:280px; display:flex; flex-direction:column; gap:12px; background: rgba(0,0,0,0.5); padding: 15px; border: 1px solid rgba(255,0,0,0.2); overflow-y: auto;}
         
-        input, select{background: #000; border: 1px solid var(--main-color); color: #fff; padding: 10px; font-family: 'Orbitron'; font-size: 10px; outline: none; width: 100%; margin-bottom: 5px;}
-        input:focus{box-shadow: 0 0 10px var(--glow-color);}
+        /* Sidebar Slim */
+        .sidebar{width:260px; display:flex; flex-direction:column; gap:10px; background: rgba(0,0,0,0.5); padding: 15px; border: 1px solid rgba(255,0,0,0.2); overflow-y: auto;}
+        
+        input, select{background: #000; border: 1px solid var(--main-color); color: #fff; padding: 8px; font-family: 'Orbitron'; font-size: 10px; outline: none; width: 100%; margin-bottom: 5px;}
 
         .btn{
             padding:10px; background: #000; color: var(--main-color); border: 1px solid var(--main-color); 
-            cursor:pointer; text-transform:uppercase; font-size:10px; font-weight: bold; transition: 0.3s;
+            cursor:pointer; text-transform:uppercase; font-size:10px; font-weight: bold; transition: 0.2s;
         }
-        .btn:hover{ background: var(--main-color); color: #000; box-shadow: 0 0 15px var(--main-color); }
+        .btn:hover{ background: var(--main-color); color: #000; box-shadow: 0 0 10px var(--main-color); }
 
-        .category-label { font-size: 11px; color: var(--main-color); margin-top: 15px; border-bottom: 1px solid rgba(255,0,0,0.3); padding-bottom: 3px; font-weight: 700;}
-        .fav-list{ display:flex; flex-direction:column; gap:6px; margin-top: 8px;}
-        
+        /* Estilo das Abas (Accordion) */
+        .accordion-item { border: 1px solid rgba(255,0,0,0.2); margin-bottom: 5px; }
+        .accordion-header {
+            background: rgba(255,0,0,0.1); padding: 10px; cursor: pointer;
+            font-size: 11px; font-weight: bold; color: var(--main-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .accordion-header:hover { background: rgba(255,0,0,0.2); }
+        .accordion-content { display: none; padding: 5px; background: rgba(0,0,0,0.3); }
+        .accordion-content.active { display: block; }
+
         .fav-item{
-            display:flex; align-items:center; justify-content:space-between; background:rgba(255,0,0,0.05); 
-            padding:10px; border: 1px solid rgba(255,0,0,0.2); border-left: 4px solid var(--main-color);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+            display:flex; align-items:center; justify-content:space-between; 
+            padding:8px; border-bottom: 1px solid rgba(255,0,0,0.1);
+            transition: 0.3s; cursor: pointer; font-size: 10px;
         }
-        .fav-item:hover {
-            background: rgba(255, 0, 0, 0.25);
-            box-shadow: 0 0 15px var(--glow-color);
-            transform: scale(1.05) translateX(5px);
+        .fav-item:hover { background: rgba(255, 0, 0, 0.2); }
+        .btn-del { color: var(--main-color); background: none; border: none; cursor: pointer; font-weight: bold; font-size: 12px;}
+
+        /* Grid de Lives */
+        .main-view {
+            flex: 1; display: grid; gap: 10px; 
+            grid-template-columns: 1fr;
+            overflow-y: auto; align-content: start;
         }
-        .fav-info { flex: 1; font-size: 10px; font-weight: bold; }
 
-        .btn-del { color: var(--main-color); background: none; border: none; cursor: pointer; font-weight: bold; padding: 0 5px;}
+        .player-box { 
+            border: 1px solid var(--main-color); background: #000; 
+            position: relative; aspect-ratio: 16 / 9; 
+        }
 
-        .player-box, .chat-box {border:1px solid var(--main-color); background:#000;}
-        .player-box { flex: 2; }
-        .chat-box { flex: 1; }
-        .full-width { flex: 100% !important; }
-        .hidden { display: none !important; }
+        .btn-close-slot {
+            position: absolute; top: 5px; right: 5px; 
+            background: var(--main-color); color: #000; 
+            border: none; cursor: pointer; font-weight: bold; 
+            padding: 2px 8px; z-index: 20;
+        }
+
         iframe {width: 100%; height: 100%; border: none;}
 
-        .datetime { text-align: right; }
-        #clock { font-size: 20px; color: var(--main-color); text-shadow: 0 0 8px var(--main-color); font-weight: bold; }
-        #date { font-size: 11px; color: #fff; opacity: 0.8; }
-
+        #clock { font-size: 18px; color: var(--main-color); font-weight: bold; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--main-color); }
     </style>
@@ -66,55 +79,67 @@
 <div class="core-panel">
     <div class="core-header">
         <div>
-            <div style="color:var(--main-color); font-size:22px; font-weight:700; letter-spacing:2px;">SANTOS & VIEIRA</div>
-            <div style="font-size:9px; opacity:0.6;">SISTEMA DE MONITORAMENTO</div>
+            <div style="color:var(--main-color); font-size:20px; font-weight:700; letter-spacing:1px;">SANTOS & VIEIRA</div>
+            <div style="font-size:8px; opacity:0.6;">SYSTEM CONTROL - MULTITELA</div>
         </div>
-        <div class="datetime">
-            <div id="clock">00:00:00</div>
-            <div id="date">00/00/0000</div>
-        </div>
+        <div id="clock">00:00:00</div>
     </div>
     
     <div class="core-body">
         <div class="sidebar">
-            <div style="font-size: 10px; color: var(--main-color);">[ ENTRADA RÁPIDA ]</div>
-            <input id="quickInput" placeholder="NOME OU LINK DO CANAL">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                <button class="btn" onclick="processInput('quick', 'twitch')">TWITCH</button>
-                <button class="btn" onclick="processInput('quick', 'kick')">KICK</button>
+            <div style="font-size: 9px; color: var(--main-color); margin-bottom: 5px;">[ NOVO CANAL ]</div>
+            <input id="quickInput" placeholder="NOME OU LINK">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom: 10px;">
+                <button class="btn" onclick="addLive(document.getElementById('quickInput').value, 'twitch')">TWITCH</button>
+                <button class="btn" onclick="addLive(document.getElementById('quickInput').value, 'kick')">KICK</button>
             </div>
 
-            <div style="border-top: 1px solid var(--main-color); padding-top: 15px; margin-top: 10px;">
-                <div style="color:var(--main-color); font-size:10px; font-weight:bold; margin-bottom:8px;">[ SALVAR FAVORITO ]</div>
-                <input id="saveInput" placeholder="NOME OU LINK DO CANAL">
-                <select id="favCat">
-                    <option value="SÓ NA CONVERSA">SÓ NA CONVERSA</option>
-                    <option value="GAMES">GAMES</option>
-                    <option value="ESPORTES">ESPORTES</option>
-                </select>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                    <button class="btn" onclick="processInput('save', 'twitch')">+ TWITCH</button>
-                    <button class="btn" onclick="processInput('save', 'kick')">+ KICK</button>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAcc('acc-save')">SALVAR FAVORITO <span>+</span></div>
+                <div id="acc-save" class="accordion-content">
+                    <input id="saveInput" placeholder="NOME">
+                    <select id="favCat">
+                        <option value="SÓ NA CONVERSA">SÓ NA CONVERSA</option>
+                        <option value="GAMES">GAMES</option>
+                        <option value="ESPORTES">ESPORTES</option>
+                    </select>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                        <button class="btn" onclick="saveFav('twitch')">+ TWITCH</button>
+                        <button class="btn" onclick="saveFav('kick')">+ KICK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAcc('acc-conversa')">SÓ NA CONVERSA <span>▼</span></div>
+                <div id="acc-conversa" class="accordion-content active">
+                    <div id="cat-CONVERSA"></div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAcc('acc-games')">GAMES <span>▼</span></div>
+                <div id="acc-games" class="accordion-content active">
+                    <div id="cat-GAMES"></div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAcc('acc-esportes')">ESPORTES <span>▼</span></div>
+                <div id="acc-esportes" class="accordion-content">
+                    <div id="cat-ESPORTES"></div>
                 </div>
             </div>
             
-            <div class="category-label">SÓ NA CONVERSA</div>
-            <div class="fav-list" id="cat-CONVERSA"></div>
-            <div class="category-label">GAMES</div>
-            <div class="fav-list" id="cat-GAMES"></div>
-            <div class="category-label">ESPORTES</div>
-            <div class="fav-list" id="cat-ESPORTES"></div>
-            
-            <button class="btn" style="margin-top:auto; font-size:8px;" onclick="location.reload()">REINICIAR</button>
+            <button class="btn" style="margin-top:auto; font-size:8px; border-style: dotted;" onclick="location.reload()">REINICIAR</button>
         </div>
 
-        <div id="pContainer" class="player-box"><iframe id="player" allowfullscreen></iframe></div>
-        <div id="cContainer" class="chat-box"><iframe id="chat" allowfullscreen></iframe></div>
+        <div id="mainView" class="main-view">
+            </div>
     </div>
 </div>
 
 <script>
-    // LISTA PADRÃO COM O KROSS ADICIONADO
     let defaultFavs = [
         { name: "Jon Vlogs", id: "jonvlogs", type: "twitch", cat: "SÓ NA CONVERSA" },
         { name: "LOUD Coringa", id: "loud_coringa", type: "twitch", cat: "GAMES" },
@@ -129,10 +154,13 @@
         setInterval(updateClock, 1000);
     }
 
+    function toggleAcc(id) {
+        const content = document.getElementById(id);
+        content.classList.toggle('active');
+    }
+
     function updateClock(){
-        const now = new Date();
-        document.getElementById('clock').innerText = now.toLocaleTimeString('pt-BR');
-        document.getElementById('date').innerText = now.toLocaleDateString('pt-BR');
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
     }
 
     function cleanID(val) {
@@ -141,20 +169,6 @@
         if(id.includes("twitch.tv/")) id = id.split("twitch.tv/")[1].split("?")[0];
         else if(id.includes("kick.com/")) id = id.split("kick.com/")[1].split("?")[0];
         return id;
-    }
-
-    function processInput(mode, type) {
-        const inputEl = mode === 'quick' ? document.getElementById('quickInput') : document.getElementById('saveInput');
-        if(!inputEl.value) return;
-        const id = cleanID(inputEl.value);
-        if(mode === 'quick') {
-            loadStream(id, type);
-        } else {
-            favorites.push({ name: id.toUpperCase(), id, type, cat: document.getElementById('favCat').value });
-            localStorage.setItem('sv_favs_v202', JSON.stringify(favorites));
-            renderFavs();
-            inputEl.value = "";
-        }
     }
 
     function renderFavs(){
@@ -167,12 +181,22 @@
             const list = document.getElementById(listId);
             if(list) {
                 list.innerHTML += `
-                <div class="fav-item" onclick="loadStream('${fav.id}', '${fav.type}')">
-                    <div class="fav-info">${fav.name.toUpperCase()}</div>
-                    <button class="btn-del" onclick="event.stopPropagation(); deleteFav(${index})">X</button>
+                <div class="fav-item" onclick="addLive('${fav.id}', '${fav.type}')">
+                    <span>${fav.name.toUpperCase()} <small>(${fav.type})</small></span>
+                    <button class="btn-del" onclick="event.stopPropagation(); deleteFav(${index})">×</button>
                 </div>`;
             }
         });
+    }
+
+    function saveFav(type){
+        const input = document.getElementById('saveInput');
+        const id = cleanID(input.value);
+        if(!id) return;
+        favorites.push({ name: id.toUpperCase(), id, type, cat: document.getElementById('favCat').value });
+        localStorage.setItem('sv_favs_v202', JSON.stringify(favorites));
+        renderFavs();
+        input.value = "";
     }
 
     function deleteFav(index){
@@ -181,25 +205,35 @@
         renderFavs();
     }
 
-    function loadStream(id, type){
-        const player = document.getElementById('player');
-        const chat = document.getElementById('chat');
-        const pCont = document.getElementById('pContainer');
-        const cCont = document.getElementById('cContainer');
-        const host = window.location.hostname || "localhost";
+    function addLive(val, type) {
+        const channelId = cleanID(val);
+        if(!channelId) return;
 
-        if(type === 'twitch'){
-            pCont.classList.remove('full-width');
-            cCont.classList.remove('hidden');
-            player.src = `https://player.twitch.tv/?channel=${id}&parent=${host}`;
-            chat.src = `https://www.twitch.tv/embed/${id}/chat?parent=${host}&darkpopout`;
-        } else if(type === 'kick') {
-            pCont.classList.remove('full-width');
-            cCont.classList.remove('hidden');
-            // Manteve o chat/página da Kick na lateral como na versão anterior
-            player.src = `https://player.kick.com/${id}?muted=false`;
-            chat.src = `https://kick.com/${id}`; 
-        }
+        const mainView = document.getElementById('mainView');
+        const host = window.location.hostname || "localhost";
+        const slot = document.createElement('div');
+        slot.className = 'player-box';
+        
+        let url = (type === 'twitch') 
+            ? `https://player.twitch.tv/?channel=${channelId}&parent=${host}` 
+            : `https://player.kick.com/${channelId}`;
+
+        slot.innerHTML = `
+            <button class="btn-close-slot" onclick="this.parentElement.remove(); checkGrid();">X</button>
+            <iframe src="${url}" allowfullscreen></iframe>
+        `;
+
+        mainView.appendChild(slot);
+        checkGrid();
+        document.getElementById('quickInput').value = "";
+    }
+
+    function checkGrid() {
+        const mainView = document.getElementById('mainView');
+        const total = mainView.children.length;
+        if(total > 4) { mainView.style.gridTemplateColumns = "repeat(auto-fit, minmax(30%, 1fr))"; }
+        else if (total > 1) { mainView.style.gridTemplateColumns = "repeat(auto-fit, minmax(45%, 1fr))"; }
+        else { mainView.style.gridTemplateColumns = "1fr"; }
     }
 </script>
 </body>
