@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SANTOS & VIEIRA | MONITOR SINGLE</title>
+    <title>SANTOS & VIEIRA | MONITOR V16</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -12,7 +12,7 @@
             --twitch-color: #9146FF;
             --kick-color: #53FC18;
             --text-main: #e1e1e6;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s ease;
         }
 
         body { 
@@ -54,15 +54,12 @@
         }
 
         .btn {
-            width: 100%; padding: 12px; cursor: pointer; font-weight: bold; border: none;
+            width: 100%; padding: 10px; cursor: pointer; font-weight: bold; border: none;
             border-radius: 4px; margin-bottom: 8px; font-size: 11px; text-transform: uppercase;
-            transition: var(--transition);
         }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
         .btn-twitch { background: var(--twitch-color); color: white; }
         .btn-kick { background: var(--kick-color); color: #000; }
-        .btn-save { background: #292d3e; color: #fff; }
 
         .fav-list { max-height: 250px; overflow-y: auto; }
         .fav-item {
@@ -71,64 +68,62 @@
             cursor: pointer; font-size: 13px;
         }
 
-        /* ÁREA DE EXIBIÇÃO ÚNICA */
         .main-view {
             flex: 1;
             display: flex;
-            flex-direction: column;
-            padding: 0;
-            overflow: hidden; /* Remove scroll pois só haverá uma tela */
             background: var(--bg-dark);
+            position: relative;
         }
 
         .live-container {
             display: flex;
             width: 100%;
-            height: 100vh; /* Ocupa a altura total da tela sempre */
+            height: 100vh;
             background: #000;
             position: relative;
+            flex: 1;
         }
 
         .video-wrapper {
             flex: 1;
             height: 100%;
-            background: #000;
         }
 
         .chat-wrapper {
             width: 350px;
             height: 100%;
-            border-left: 2px solid #292d3e;
-            transition: var(--transition);
             background: #090b10;
+            border-left: 1px solid #292d3e;
+            transition: var(--transition);
             position: relative;
         }
 
-        .chat-wrapper.hidden {
-            width: 0;
-            border-left: none;
-            overflow: hidden;
-        }
+        .chat-wrapper.hidden { width: 0; border-left: none; }
 
-        /* SETINHA */
         .toggle-chat-arrow {
             position: absolute;
-            left: -20px;
+            left: -18px; 
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 80px;
-            background: #292d3e;
-            color: #fff;
-            border: none;
+            width: 18px;
+            height: 35px;
+            background: rgba(41, 45, 62, 0.8);
+            color: #53FC18;
+            border: 1px solid #3d445e;
             cursor: pointer;
-            z-index: 100;
-            border-radius: 8px 0 0 8px;
+            z-index: 9999;
+            border-radius: 4px 0 0 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
         }
+
+        .toggle-chat-arrow:hover { background: #53FC18; color: #000; }
+
+        /* Esconder seta em tela cheia */
+        :fullscreen .toggle-chat-arrow,
+        :-webkit-full-screen .toggle-chat-arrow { display: none !important; }
 
         iframe { width: 100%; height: 100%; border: none; display: block; }
     </style>
@@ -138,9 +133,8 @@
     <div class="sidebar" id="sidebar">
         <button class="toggle-sidebar-btn" onclick="toggleSidebar()" id="tBtn">◀</button>
         <div class="header-title">SANTOS & VIEIRA</div>
-
+        
         <div class="section">
-            <span class="label">Monitorar</span>
             <input id="streamID" placeholder="Nome do Canal...">
             <div style="display: flex; gap: 5px;">
                 <button class="btn btn-twitch" onclick="openLive('twitch')">Twitch</button>
@@ -149,24 +143,22 @@
         </div>
 
         <div class="section">
-            <span class="label">Meus Canais</span>
+            <span class="label">Favoritos</span>
             <div id="favList" class="fav-list"></div>
-            <input id="favID" style="margin-top: 10px;" placeholder="Salvar ID...">
+            <input id="favID" style="margin-top: 10px;" placeholder="Novo Favorito...">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                <button class="btn btn-save" onclick="addFav('twitch')">+ TWITCH</button>
-                <button class="btn btn-save" onclick="addFav('kick')">+ KICK</button>
+                <button class="btn btn-twitch" style="padding: 5px" onclick="addFav('twitch')">+ TW</button>
+                <button class="btn btn-kick" style="padding: 5px" onclick="addFav('kick')">+ KC</button>
             </div>
         </div>
     </div>
 
-    <div id="mainView" class="main-view">
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #444;">
-            Selecione um canal para iniciar o monitoramento
-        </div>
-    </div>
+    <div id="mainView" class="main-view"></div>
 
 <script>
-    let favorites = JSON.parse(localStorage.getItem('sv_favs_v12')) || [];
+    // JON VLOGS ADICIONADO DIRETAMENTE AQUI NO CÓDIGO INICIAL
+    let defaultFavs = [{ id: 'jonvlogs', type: 'twitch' }];
+    let favorites = JSON.parse(localStorage.getItem('sv_favs_v16')) || defaultFavs;
 
     function toggleSidebar() {
         const sb = document.getElementById('sidebar');
@@ -176,20 +168,17 @@
 
     function toggleChat(btn) {
         const wrapper = btn.parentElement;
-        wrapper.classList.toggle('hidden');
-        btn.innerText = wrapper.classList.contains('hidden') ? "◀" : "▶";
+        const isHidden = wrapper.classList.toggle('hidden');
+        btn.innerText = isHidden ? "◀" : "▶";
     }
 
     function openLive(type, id = null) {
         const canal = id || document.getElementById('streamID').value.trim();
         if(!canal) return;
-
         const mainView = document.getElementById('mainView');
         const host = window.location.hostname || "localhost";
         
-        // LIMPA A TELA ANTES DE ADICIONAR A NOVA (Remove função multi-tela)
         mainView.innerHTML = "";
-
         const container = document.createElement('div');
         container.className = 'live-container';
 
@@ -215,16 +204,14 @@
             </div>
             ${chatHTML}
         `;
-
         mainView.appendChild(container);
-        if(!id) document.getElementById('streamID').value = "";
     }
 
     function addFav(type) {
         const id = document.getElementById('favID').value.trim();
         if(!id) return;
         favorites.push({ id, type });
-        localStorage.setItem('sv_favs_v12', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v16', JSON.stringify(favorites));
         renderFavs();
         document.getElementById('favID').value = "";
     }
@@ -234,18 +221,16 @@
         list.innerHTML = "";
         favorites.forEach((fav, index) => {
             const color = fav.type === 'twitch' ? 'var(--twitch-color)' : 'var(--kick-color)';
-            list.innerHTML += `
-                <div class="fav-item" onclick="openLive('${fav.type}', '${fav.id}')">
-                    <span><b style="color:${color}">●</b> ${fav.id}</span>
-                    <span style="color:#444" onclick="event.stopPropagation(); removeFav(${index})">×</span>
-                </div>
-            `;
+            list.innerHTML += `<div class="fav-item" onclick="openLive('${fav.type}', '${fav.id}')">
+                <span><b style="color:${color}">●</b> ${fav.id}</span>
+                <span style="color:#444" onclick="event.stopPropagation(); removeFav(${index})">×</span>
+            </div>`;
         });
     }
 
     function removeFav(index) {
         favorites.splice(index, 1);
-        localStorage.setItem('sv_favs_v12', JSON.stringify(favorites));
+        localStorage.setItem('sv_favs_v16', JSON.stringify(favorites));
         renderFavs();
     }
 </script>
