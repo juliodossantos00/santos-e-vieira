@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universal Video Downloader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: #121212;
-            color: #ffffff;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f8fafc;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,20 +23,32 @@
             padding: 20px;
         }
 
-        .container {
-            background-color: #1e1e1e;
+        .card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
         }
 
         h1 {
             font-size: 24px;
-            margin-bottom: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
             text-align: center;
-            color: #00adb5;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 20px;
         }
 
         .input-group {
@@ -46,169 +59,148 @@
 
         input[type="text"] {
             flex: 1;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #333;
-            background-color: #2a2a2a;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
             color: #fff;
+            font-size: 14px;
             outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #6366f1;
         }
 
         button {
             padding: 12px 20px;
             border: none;
-            border-radius: 6px;
-            background-color: #00adb5;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: #fff;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.2s ease;
         }
 
         button:hover {
-            background-color: #008891;
+            opacity: 0.9;
         }
 
         .options-group {
             display: none;
             flex-direction: column;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #334155;
         }
 
-        .video-preview {
+        .field {
             display: flex;
-            align-items: center;
-            gap: 15px;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .video-preview img {
-            width: 100px;
-            border-radius: 6px;
-        }
-
-        .video-title {
-            font-size: 14px;
-            font-weight: bold;
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
         }
 
         select {
             padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #333;
-            background-color: #2a2a2a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
             color: #fff;
+            font-size: 14px;
             outline: none;
-            width: 100%;
+            cursor: pointer;
         }
 
         .status {
             margin-top: 15px;
             text-align: center;
-            font-size: 14px;
-            color: #aaa;
+            font-size: 13px;
+            color: #38bdf8;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="card">
     <h1>Video Downloader</h1>
+    <p class="subtitle">Baixe vídeos e áudios com opções de qualidade</p>
     
     <div class="input-group">
-        <input type="text" id="videoUrl" placeholder="Cole o link do vídeo aqui...">
+        <input type="text" id="videoUrl" placeholder="Cole o link aqui...">
         <button onclick="fetchInfo()">Buscar</button>
     </div>
 
     <div class="options-group" id="optionsGroup">
-        <div class="video-preview">
-            <img id="thumb" src="" alt="Thumbnail">
-            <div class="video-title" id="videoTitle"></div>
-        </div>
-
-        <div>
-            <label for="formatSelect">Formato:</label>
-            <select id="formatSelect" onchange="toggleResolutionSelect()">
-                <option value="mp4">MP4 (Vídeo)</option>
-                <option value="mp3">MP3 (Áudio)</option>
+        <div class="field">
+            <label for="formatSelect">Formato Desejado</label>
+            <select id="formatSelect" onchange="toggleOptions()">
+                <option value="mp4">Vídeo (MP4)</option>
+                <option value="mp3">Apenas Áudio (MP3)</option>
             </select>
         </div>
 
-        <div id="resGroup">
-            <label for="resSelect">Resolução:</label>
+        <div class="field" id="resGroup">
+            <label for="resSelect">Resolução do Vídeo</label>
             <select id="resSelect">
-                <!-- Preenchido via JS -->
+                <option value="1080p">1080p (Full HD)</option>
+                <option value="720p" selected>720p (HD)</option>
+                <option value="480p">480p (SD)</option>
+                <option value="360p">360p</option>
             </select>
         </div>
 
-        <button onclick="downloadVideo()" style="width: 100%;">Baixar Agora</button>
+        <button onclick="downloadMedia()" style="width: 100%; margin-top: 5px;">Baixar Arquivo</button>
     </div>
 
     <div class="status" id="statusText"></div>
 </div>
 
 <script>
-    const API_URL = 'http://localhost:5000';
+    const API_URL = 'http://localhost:5000'; // Altere para a URL da sua API se houver servidor online
 
-    async function fetchInfo() {
+    function fetchInfo() {
         const url = document.getElementById('videoUrl').value.trim();
         const statusText = document.getElementById('statusText');
         const optionsGroup = document.getElementById('optionsGroup');
 
         if (!url) {
-            alert('Por favor, insira uma URL válida.');
+            statusText.textContent = 'Por favor, cole um link válido.';
             return;
         }
 
-        statusText.textContent = 'Buscando informações do vídeo...';
-        optionsGroup.style.display = 'none';
+        statusText.textContent = 'Link validado com sucesso!';
+        optionsGroup.style.display = 'flex';
+    }
 
-        try {
-            const response = await fetch(`${API_URL}/info`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                document.getElementById('thumb').src = data.thumbnail;
-                document.getElementById('videoTitle').textContent = data.title;
-                
-                const resSelect = document.getElementById('resSelect');
-                resSelect.innerHTML = '';
-
-                data.formats.forEach(f => {
-                    const option = document.createElement('option');
-                    option.value = f.resolution;
-                    option.textContent = f.resolution;
-                    resSelect.appendChild(option);
-                });
-
-                optionsGroup.style.display = 'flex';
-                statusText.textContent = '';
-            } else {
-                statusText.textContent = 'Erro ao carregar vídeo: ' + data.error;
-            }
-        } catch (err) {
-            statusText.textContent = 'Erro de conexão com o servidor backend.';
+    function toggleOptions() {
+        const format = document.getElementById('formatSelect').value;
+        const resGroup = document.getElementById('resGroup');
+        
+        // Esconde a opção de resolução se o usuário escolher MP3
+        if (format === 'mp3') {
+            resGroup.style.display = 'none';
+        } else {
+            resGroup.style.display = 'flex';
         }
     }
 
-    function toggleResolutionSelect() {
-        const format = document.getElementById('formatSelect').value;
-        const resGroup = document.getElementById('resGroup');
-        resGroup.style.display = format === 'mp3' ? 'none' : 'block';
-    }
-
-    async function downloadVideo() {
+    async function downloadMedia() {
         const url = document.getElementById('videoUrl').value.trim();
         const formatType = document.getElementById('formatSelect').value;
         const resolution = document.getElementById('resSelect').value;
         const statusText = document.getElementById('statusText');
 
-        statusText.textContent = 'Processando o download, aguarde...';
+        statusText.textContent = 'Iniciando processamento do download...';
 
         try {
             const response = await fetch(`${API_URL}/download`, {
@@ -222,16 +214,16 @@
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                a.download = `video.${formatType}`;
+                a.download = `midia.${formatType}`;
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
                 statusText.textContent = 'Download concluído!';
             } else {
-                statusText.textContent = 'Erro no download.';
+                statusText.textContent = 'Erro ao processar o arquivo no servidor.';
             }
         } catch (err) {
-            statusText.textContent = 'Erro de conexão no download.';
+            statusText.textContent = 'Conecte um backend em Python para realizar o download direto.';
         }
     }
 </script>
